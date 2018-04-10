@@ -802,6 +802,7 @@ namespace EamonNet
         {
             // add player monster
             Monster playerMonster = new Monster();
+            playerMonster.Data = new int[12];
             _currentAdventure.Monsters[0] = playerMonster;
             Character player = this.Player();
 
@@ -835,6 +836,8 @@ namespace EamonNet
             string[] armorNames = {"", "LEATHER", "CHAIN MAIL", "PLATE ARMOR"};
             armorArtifact.Name = armorNames[m];
 
+            armorArtifact.Data = new int[9];
+
             armorArtifact.Data[2] = 11;
             armorArtifact.Data[3] = m * 7;
             armorArtifact.Data[4] = -999;
@@ -848,6 +851,8 @@ namespace EamonNet
                 player.ShieldWorn = _currentAdventure.NumberOfArtifacts + _currentAdventure.numberOfPlayerWeapons + 1;
                 Artifact shield = new Artifact();
                 _currentAdventure.Artifacts[player.ShieldWorn] = shield;
+
+                shield.Data = new int[9];
 
                 shield.Name = "SHEILD";
                 shield.Data[2] = 11;
@@ -879,7 +884,7 @@ namespace EamonNet
             }
 
             // add players weapon ability
-            oddsToHit += player.WeaponAbility[newWeapon.Data[6]];
+            oddsToHit += player.WeaponAbility[newWeapon.Data[6] - 1];
 
             // add weapons complexity
             oddsToHit += newWeapon.Data[5];
@@ -909,15 +914,18 @@ namespace EamonNet
             string path2 = Path.Combine(_currentAdventure.Path, "EAMON.DESC");
             string[] records = new string[_currentAdventure.NumberOfMonsters];
             string[] descriptionRecords = new string[_currentAdventure.NumberOfMonsters];
+            //monster array is 1 indexed in old code so allow a garbage record in to the 0 slot, it will be skipped
             this.GetRecordsFromFile(path, MonsterRecordLength, _currentAdventure.NumberOfMonsters, 1, records);
             this.GetRecordsFromFile(path2, RoomDescriptionRecordLength, _currentAdventure.NumberOfMonsters, 301, descriptionRecords);
 
             _currentAdventure.Monsters = new Monster[_currentAdventure.NumberOfMonsters + 1];
-            for (int i = 1; i <= _currentAdventure.NumberOfMonsters; i++)
+            for (int i = 0; i < _currentAdventure.NumberOfMonsters; i++)
             {
-                string[] tokens = records[i].Split('\r');
+                string[] tokens = records[i].Split('\n');
                 int currentToken = 0;
 
+                _currentAdventure.Monsters[i] = new Monster();
+                
                 _currentAdventure.Monsters[i].Name = tokens[currentToken++];
                 _currentAdventure.Monsters[i].Data = new int[12];
                 for (int j = 0; j < 12; j++)
@@ -962,10 +970,12 @@ namespace EamonNet
             for (int i = 0; i < 4; i++)
             {
                 Character player = this.Player();
+                _currentAdventure.Artifacts[_currentAdventure.NumberOfArtifacts + i] = new Artifact();
+                
                 Artifact currentArtifact = _currentAdventure.Artifacts[_currentAdventure.NumberOfArtifacts + i];
 
                 currentArtifact.Name = player.WeaponName[i];
-                currentArtifact.Data = new int[8];
+                currentArtifact.Data = new int[9];
                 currentArtifact.Data[6] = player.WeaponType[i];
                 currentArtifact.Data[5] = player.WeaponOdds[i];
                 currentArtifact.Data[7] = player.WeaponDice[i];
@@ -2126,7 +2136,7 @@ namespace EamonNet
                 }
 
                 Console.WriteLine(stringToPrint.Substring(index, lineLength));
-                index =+ lineLength;
+                index += lineLength;
             }
         }
 
