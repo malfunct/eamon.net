@@ -1008,7 +1008,7 @@ namespace EamonNet
                 _currentAdventure.Rooms[i].Description = roomDescriptions[i].Substring(0, endIndex);
 
                 // room not visited
-                _currentAdventure.Rooms[i].roomVisted = false;
+                _currentAdventure.Rooms[i].RoomVisted = false;
             }
 
             // read rooms data
