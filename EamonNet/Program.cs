@@ -149,6 +149,8 @@ namespace EamonNet
         {
             public string Name;
 
+            public string LongDescription;
+
             public int[] Data;
         }
 
@@ -907,10 +909,13 @@ namespace EamonNet
         private void ReadEamonArtifacts()
         {
             string path = Path.Combine(_currentAdventure.Path, "EAMON.ARTIFACTS");
+            string path2 = Path.Combine(_currentAdventure.Path, "EAMON.DESC");
             string[] records = new string[_currentAdventure.NumberOfArtifacts];
+            string[] descriptionRecords = new string[_currentAdventure.NumberOfArtifacts];
             this.GetRecordsFromFile(path, ArtifactRecordLength, _currentAdventure.NumberOfArtifacts, 1, records);
+            this.GetRecordsFromFile(path2, RoomDescriptionRecordLength, _currentAdventure.NumberOfArtifacts, 101, descriptionRecords);
 
-            _currentAdventure.Artifacts = new Artifact[_currentAdventure.NumberOfArtifacts + 4];
+            _currentAdventure.Artifacts = new Artifact[_currentAdventure.NumberOfArtifacts + 6];
             for (int i = 0; i < _currentAdventure.NumberOfArtifacts; i++)
             {
                 string[] tokens = records[i].Split('\r');
@@ -1000,11 +1005,16 @@ namespace EamonNet
 
             _currentAdventure.Rooms = new Room[_currentAdventure.NumberOfRooms];
             string[] roomDescriptions = new string[_currentAdventure.NumberOfRooms];
-            this.GetRecordsFromFile(path, RoomDescriptionRecordLength, _currentAdventure.NumberOfRooms, 1, roomDescriptions);
+
+            //because rooms are 1 indexed we are going to keep room 0 empty
+            //so we will re-read the first record (which has junk as far as this part is concerned)
+            //and record 0 will be skipped in the loop below
+            this.GetRecordsFromFile(path, RoomDescriptionRecordLength, _currentAdventure.NumberOfRooms, 0, roomDescriptions);
 
             for (int i = 1; i < _currentAdventure.NumberOfRooms; i++)
             {
                 int endIndex = roomDescriptions[i].IndexOf("\r", StringComparison.InvariantCulture);
+                _currentAdventure.Rooms[i] = new Room();
                 _currentAdventure.Rooms[i].Description = roomDescriptions[i].Substring(0, endIndex);
 
                 // room not visited
@@ -1015,11 +1025,16 @@ namespace EamonNet
             path = Path.Combine(_currentAdventure.Path, "EAMON.ROOMS");
 
             record = new string[_currentAdventure.NumberOfRooms];
-            this.GetRecordsFromFile(path, LR, _currentAdventure.NumberOfRooms, 1, record);
+
+            //because rooms are 1 indexed we are going to keep room 0 empty
+            //so we will re-read the first record (which has junk as far as this part is concerned)
+            //and record 0 will be skipped in the loop below
+            this.GetRecordsFromFile(path, LR, _currentAdventure.NumberOfRooms, 0, record);
             for (int i = 1; i < _currentAdventure.NumberOfRooms; i++)
             {
                 tokens = record[i].Split('\r');
                 currentToken = 0;
+                _currentAdventure.Rooms[i].Directions = new int[6];
                 for (int dir = 0; dir < 6; dir++)
                 {
                     _currentAdventure.Rooms[i].Directions[dir] = int.Parse(tokens[currentToken++]);
@@ -1031,7 +1046,11 @@ namespace EamonNet
             // read room names
             path = Path.Combine(_currentAdventure.Path, "EAMON.ROOM.NAME");
             record = new string[_currentAdventure.NumberOfRooms];
-            this.GetRecordsFromFile(path, LN, _currentAdventure.NumberOfRooms, 1, record);
+
+            //because rooms are 1 indexed we are going to keep room 0 empty
+            //so we will re-read the first record (which has junk as far as this part is concerned)
+            //and record 0 will be skipped in the loop below
+            this.GetRecordsFromFile(path, LN, _currentAdventure.NumberOfRooms, 0, record);
             for (int i = 1; i < _currentAdventure.NumberOfRooms; i++)
             {
                 int endIndex = record[i].IndexOf("\r", StringComparison.InvariantCulture);
@@ -1922,6 +1941,7 @@ namespace EamonNet
             character.Charisma = int.Parse(characterTokens[currentToken++]);
 
             character.SpellAbility = new int[4];
+            character.CurrentSpellAbility = new int[4];
             for (int x = 0; x < 4; x++)
             {
                 character.SpellAbility[x] = int.Parse(characterTokens[currentToken++]);
