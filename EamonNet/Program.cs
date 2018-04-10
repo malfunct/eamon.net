@@ -138,6 +138,8 @@ namespace EamonNet
 
             public Monster[] Monsters;
 
+            public string[] Effects;
+
             public int CurrentRoom;
 
             public int roomExited;
@@ -157,6 +159,8 @@ namespace EamonNet
         class Monster
         {
             public string Name;
+
+            public string LongDescription;
 
             public int[] Data;
         }
@@ -790,6 +794,7 @@ namespace EamonNet
             this.ReadRooms();
             this.ReadEamonArtifacts();
             this.ReadEamonMonsters();
+            this.ReadEffects();
             this.InitPlayerMonster();
         }
 
@@ -885,11 +890,27 @@ namespace EamonNet
             playerMonster.Data[10] = oddsToHit;
         }
 
+        private void ReadEffects()
+        {
+            string path = Path.Combine(_currentAdventure.Path, "EAMON.DESC");
+            string[] records = new string[_currentAdventure.NumberOfEffects];
+            this.GetRecordsFromFile(path, RoomDescriptionRecordLength, _currentAdventure.NumberOfEffects, 201, records);
+
+            _currentAdventure.Effects = new string[_currentAdventure.NumberOfEffects];
+            for (int i = 0; i < _currentAdventure.NumberOfEffects; i++)
+            {
+                _currentAdventure.Effects[i] = this.TrimDescription(records[i]);
+            }
+        }
+
         private void ReadEamonMonsters()
         {
             string path = Path.Combine(_currentAdventure.Path, "EAMON.MONSTERS");
+            string path2 = Path.Combine(_currentAdventure.Path, "EAMON.DESC");
             string[] records = new string[_currentAdventure.NumberOfMonsters];
+            string[] descriptionRecords = new string[_currentAdventure.NumberOfMonsters];
             this.GetRecordsFromFile(path, MonsterRecordLength, _currentAdventure.NumberOfMonsters, 1, records);
+            this.GetRecordsFromFile(path2, RoomDescriptionRecordLength, _currentAdventure.NumberOfMonsters, 301, descriptionRecords);
 
             _currentAdventure.Monsters = new Monster[_currentAdventure.NumberOfMonsters + 1];
             for (int i = 1; i <= _currentAdventure.NumberOfMonsters; i++)
@@ -903,6 +924,8 @@ namespace EamonNet
                 {
                     _currentAdventure.Monsters[i].Data[j] = int.Parse(tokens[currentToken++]);
                 }
+
+                _currentAdventure.Monsters[i].LongDescription = this.TrimDescription(descriptionRecords[i]);
             }
         }
 
@@ -918,15 +941,18 @@ namespace EamonNet
             _currentAdventure.Artifacts = new Artifact[_currentAdventure.NumberOfArtifacts + 6];
             for (int i = 0; i < _currentAdventure.NumberOfArtifacts; i++)
             {
-                string[] tokens = records[i].Split('\r');
+                string[] tokens = records[i].Split('\n');
                 int currentToken = 0;
 
+                _currentAdventure.Artifacts[i] = new Artifact();
                 _currentAdventure.Artifacts[i].Name = tokens[currentToken++];
                 _currentAdventure.Artifacts[i].Data = new int[8];
                 for (int j = 0; j < 8; j++)
                 {
                     _currentAdventure.Artifacts[i].Data[j] = int.Parse(tokens[currentToken++]);
                 }
+
+                _currentAdventure.Artifacts[i].LongDescription = this.TrimDescription(descriptionRecords[i]);
             }
 
 
@@ -1013,9 +1039,8 @@ namespace EamonNet
 
             for (int i = 1; i < _currentAdventure.NumberOfRooms; i++)
             {
-                int endIndex = roomDescriptions[i].IndexOf("\r", StringComparison.InvariantCulture);
                 _currentAdventure.Rooms[i] = new Room();
-                _currentAdventure.Rooms[i].Description = roomDescriptions[i].Substring(0, endIndex);
+                _currentAdventure.Rooms[i].Description = TrimDescription(roomDescriptions[i]);
 
                 // room not visited
                 _currentAdventure.Rooms[i].RoomVisted = false;
@@ -2114,6 +2139,13 @@ namespace EamonNet
         {
             builder.Append(token);
             builder.Append("\r");
+        }
+        
+        private string TrimDescription(string description)
+        {
+            int endIndex = description.IndexOf("\r", StringComparison.InvariantCulture);
+            string trimmedDescription = description.Substring(0, endIndex);
+            return trimmedDescription;
         }
     }
 }

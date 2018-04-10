@@ -50,11 +50,15 @@
     <None Include="CHARACTERS">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="E001\EAMON.ARTIFACTS" />
+    <None Include="E001\EAMON.ARTIFACTS">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="E001\EAMON.DESC">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="E001\EAMON.MONSTERS" />
+    <None Include="E001\EAMON.MONSTERS">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="E001\EAMON.NAME">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
