@@ -658,22 +658,27 @@ namespace EamonNet
             this.ReadDataFiles();
             _currentAdventure.roomToEnter = 1;
 
-            this.GoToRoom();
+            bool stay = true;
+
+            do
+            {
+                this.GoToRoom();
+                this.DecrementPlayerSpeedCounter();
+                this.RegenerateSpellAbility();
+                bool roomIsLit = this.CheckLighting();
+                this.YouSee(roomIsLit);
+                this.CheckForMonsters();
+            } while (stay);
         }
 
         private void GoToRoom()
         {
             _currentAdventure.roomExited = _currentAdventure.CurrentRoom;
             _currentAdventure.CurrentRoom = _currentAdventure.roomToEnter;
-
-            YouSee();
         }
 
-        private void YouSee()
+        private void YouSee(bool roomIsLit)
         {
-            this.DecrementPlayerSpeedCounter();
-            this.RegenerateSpellAbility();
-            bool roomIsLit = this.CheckLighting();
             if (roomIsLit)
             {
                 this.DescribeRoom();
@@ -682,12 +687,28 @@ namespace EamonNet
             {
                 Console.WriteLine("IT'S TOO DARK TO SEE.");
             }
-            this.CheckForMonsters();
         }
 
         private void CheckForMonsters()
         {
-            
+            Monster monsterInRoom = null;
+            for (int i = 0; i < this._currentAdventure.NumberOfMonsters; i++)
+            {
+                if (this._currentAdventure.Monsters[i].Data[5] == this._currentAdventure.CurrentRoom)
+                {
+                    monsterInRoom = this._currentAdventure.Monsters[i];
+                    break;
+                }
+            }
+
+            if (monsterInRoom != null)
+            {
+                if (monsterInRoom.Data[0] == 0)
+                {
+                    monsterInRoom.Data[0] = 1;
+                    Console.WriteLine();
+                }
+            }
         }
 
         private void DescribeRoom()
