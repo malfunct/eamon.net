@@ -1,0 +1,259 @@
+ 1  REM 
+
+EAMON MAIN HALL
+BY DONALD BROWN
+REDESIGNED BY
+FRANK KUNZE
+
+ 2  REM REV. 5 AUG 99/23 DEC 02
+ 5  GOTO 31000: REM 
+
+EAMON ADVENTURER'S GUILD
+7625 HAWKHAVEN DR.
+CLEMMONS, NC 27012
+
+ 10  IF  LEN (A$) <  = CP - 1 THEN  PRINT A$: RETURN 
+ 20  FOR K = CP - 1 TO 1 STEP  - 1: IF  MID$ (A$,K,1) = " " THEN  PRINT  LEFT$ (A$,K - 1):A$ =  RIGHT$ (A$, LEN (A$) - K): GOTO 10
+ 30  NEXT : PRINT "WORD TOO LONG": STOP 
+ 100  REM 
+
+MENU
+
+ 110  PRINT FF$: HOME : IF CP = 40 THEN  INVERSE : PRINT  SPC( 40)"  EAMON MAIN HALL -- MY VER. 3 BY F.K.  " SPC( 40): NORMAL : PRINT 
+ 120  IF CP = 80 THEN  INVERSE : PRINT  SPC( 80)"   THE WONDERFUL WORLD OF EAMON --- MY MAIN HALL V3 BY FRANK KUNZE  7 OCT 1994  " SPC( 80): NORMAL : PRINT 
+ 130  VTAB 5:A$ = "As you wander about the Main Hall, you realize you can do one of six things:": GOSUB 10: PRINT : PRINT SP$" 1.  Go on an adventure.": PRINT : PRINT SP$" 2.  Visit the Weapons/Armour shop.": PRINT 
+ 140 A$ = SP$ + " 3.  Hire a Wizard to teach you some" + S2$ + " spells": GOSUB 10: PRINT :A$ = SP$ + " 4.  Find the banker to deposit or" + S1$ + " withdraw some gold.": GOSUB 10: PRINT 
+ 150  PRINT SP$" 5.  Examine your abilities.": PRINT : PRINT SP$" 6.  Temporarily leave the universe.": PRINT : PRINT : PRINT SP$"Hit the key for your choice. (1-6) ";
+ 160  GET A$:CM =  VAL (A$): ON CM < 1 OR CM > 7 GOTO 160: PRINT CM: ON CM GOTO 1000,2000,3000,4000,5000,6000: STOP 
+ 200  REM 
+
+WRITE CHAR. DATA
+
+ 210  PRINT NA$: PRINT HD: PRINT AG: PRINT CH: FOR X = 1 TO 4: PRINT SA%(X): NEXT : FOR X = 1 TO 5: PRINT WA%(X): NEXT : PRINT AE: PRINT SE$
+ 220  PRINT GO: PRINT BA: PRINT AC: FOR W = 1 TO 4: PRINT WN$(W): PRINT WT%(W): PRINT WO%(W): PRINT WD%(W): PRINT WS%(W): NEXT : RETURN 
+ 300  POKE 216,0: PRINT  CHR$ (7)"ERROR!": IF  PEEK (222) = 6 THEN  PRINT "FILE: "F$: PRINT "IS MISSING": END 
+ 310  PRINT "CODE " PEEK (222): PRINT "IN " PEEK (218) +  PEEK (219) * 256: END 
+ 1000  REM 
+
+ADVENTURE
+
+ 1010  HOME :A$ = "Please select an adventure, or hit <ESC> to exit.": GOSUB 10
+ 1020  VTAB 4: FOR X = 1 TO 17: PRINT AN$(X,1);: HTAB 40: PRINT AN$(X + 17,1): NEXT :L = 4:H = 1:Z = 1
+ 1030  VTAB L: HTAB H: INVERSE : PRINT AN$(Z,1): NORMAL : POKE 49168,0
+ 1040 A =  PEEK (49152): ON A < 128 GOTO 1040:A = A - 128: VTAB L: HTAB H: PRINT AN$(Z,1)
+ 1050  IF A = 8 THEN H = H - 39:Z = Z - 17: ON H = 1 GOTO 1030:H = 40:Z = Z + 34: GOTO 1030
+ 1060  IF A = 11 THEN L = L - 1:Z = Z - 1: ON L > 3 GOTO 1030:L = 20:Z = Z + 17: GOTO 1030
+ 1070  IF A = 21 THEN H = H + 39:Z = Z + 17: ON H = 40 GOTO 1030:H = 1:Z = Z - 34: GOTO 1030
+ 1080  IF A = 10 THEN L = L + 1:Z = Z + 1: ON L < 21 GOTO 1030:L = 4:Z = Z - 17: GOTO 1030
+ 1090  IF A = 27 THEN  GOTO 100
+ 1100  ON A <  > 13 GOTO 1030: HOME : PRINT  CHR$ (21): HOME 
+ 1110  POKE 49168,0: PRINT D$"PREFIX": INPUT P$: PRINT D$: PRINT D$"PREFIX" + P$ + AN$(Z,2): ONERR  GOTO 1150
+ 1120  PRINT D$"VERIFY FRESH.MEAT": POKE 216,0: IF Z > 31 THEN  GOTO 1150
+ 1130  PRINT "YOU ALREADY HAVE A CHARACTER THERE.  USETHE CONTINUE GAME OPTION FROM THE MAIN  MENU...";: POKE 49168,0: GET A$: PRINT : PRINT D$"PR#3": TEXT : HOME 
+ 1140  PRINT D$"PREFIX/": PRINT D$"PREFIX": INPUT P$: PRINT D$: PRINT D$"PREFIX"P$: GOTO 100
+ 1150  POKE 216,0: PRINT D$"PREFIX/": PRINT D$"PREFIX": INPUT P$: PRINT D$: PRINT D$"PREFIX"P$
+ 1160  IF Z < 32 THEN  PRINT O$"CHAR.EXT,L256": PRINT W$"CHAR.EXT,R"RE: PRINT "": PRINT C$
+ 1170  PRINT D$"PREFIX": INPUT P$: PRINT D$: PRINT D$"PREFIX" + P$ + AN$(Z,2)
+ 1180 F$ = "EAMON.NAME": POKE 216,0: PRINT O$F$: PRINT R$F$: INPUT AN$: PRINT C$: HOME : VTAB 5: PRINT "You are about to adventure in": PRINT : INVERSE : PRINT AN$: NORMAL : FOR X = 1 TO 10000: NEXT 
+ 1190  PRINT O$"FRESH.MEAT": PRINT W$"FRESH.MEAT": PRINT RE + 500: GOSUB 200: PRINT C$: PRINT D$"-EAMON." +  RIGHT$ (AN$(Z,2),3) + ".INTRO"
+ 2000  REM 
+
+WEP SHOP
+
+ 2010  PRINT FF$: HOME :A$ = "As you enter the weapon shop, Marcos Cavielli (the owner) comes from out of the back room and says, " + Q$ + "Well, as I live and breathe, if it isn't my old pal, " + NA$ + "!": GOSUB 10: PRINT 
+ 2020 A$ = Q$ + "So, do you want to: Buy a weapon, Sell a weapon, or get some better armour?" + Q$: GOSUB 10: PRINT : PRINT "(Hit a key, B, S, A, or N(othing) :";
+ 2030  GET A$: PRINT A$: ON A$ = "N" GOTO 100: FOR TR = 1 TO 3: IF A$ <  >  MID$ ("BSA",TR,1) THEN  NEXT : GOTO 2010
+ 2040  FOR TR = TR TO TR: NEXT :C2 = CH +  INT (11 *  RND (1) - 5):C2 = C2 + (C2 = 0):RT = 10 / C2: ON TR - 1 GOTO 2080,2280,2590
+ 2080  REM 
+
+BUY
+
+ 2085  IF WN$(4) <  > "NONE" THEN A$ = "Marcos smiles at you and says, " + Q$ + "Thatsa good, but first you gotta sell me a weapon. You know the law: No more than four weapons per person!" + Q$: GOSUB 10: GOTO 2280
+ 2090 A$ = "Marcos smiles at you and says, " + Q$ + "Good! I gotta the best. You wanta (A)xe, (B)ow, (M)ace, s(P)ear, or (S)word?": GOSUB 10: GOSUB 2760: PRINT N$
+ 2100  PRINT :A$ = "Marcos says, " + Q$ + "Well, I just happen to have three " + N$ + "S in stock, of varying quality!": GOSUB 10: PRINT 
+ 2110 A$ = Q$ + "I've got a very good one for " +  STR$ ( FN P(2 * BP)) + " GP, a fair one for " +  STR$ ( FN P(BP)) + " GP, and a kinda shabby one for " +  STR$ ( FN P(BP / 2)) + " GP. Which do you want?" + Q$: GOSUB 10: PRINT 
+ 2120  PRINT "(Hit a key: G, F, P, or (N)othing :";
+ 2130  GET A$: FOR A = 1 TO 4: IF A$ <  >  MID$ ("GFPN",A,1) THEN  NEXT : GOTO 2130
+ 2140  PRINT A$: ON A = 4 GOTO 100:Q = A: FOR A = A TO A: NEXT :P = BP + BP * (Q = 1) - BP / 2 * (Q = 3):P =  FN P(P)
+ 2160  IF P > GO THEN A$ = "Marcos shakes a finger at you and says, " + Q$ + "You shouldn't play tricks on an old friend! Come back when you gotta more gold!" + Q$ + " He then walks away.": GOSUB 10: GOSUB 7000: GOTO 100
+ 2180  FOR W = 1 TO 4: IF WN$(W) = N$ THEN N$ = N$ + "#": GOTO 2180
+ 2190  NEXT : FOR W = 1 TO 4: IF WN$(W) <  > "NONE" THEN  NEXT 
+ 2200 WN$(W) = N$:WT%(W) = TP:WO%(W) = 10 * (2 - Q):WD%(W) = 1:WS%(W) = SI:GO = GO - P: FOR W = W TO W: NEXT 
+ 2210 A$ = "Marcos hands you your weapon and takes the price from you.": GOSUB 10: PRINT 
+ 2220  IF GO <  FN P(50) THEN 2270
+ 2230 A$ = "He now asks you, " + Q$ + "Now how about some armour?" + Q$: GOSUB 10: PRINT : PRINT "(Hit Y or N) -->";
+ 2240  GET A$: PRINT A$: IF A$ = "N" THEN  PRINT A$: PRINT : GOTO 2270
+ 2250  IF A$ <  > "Y" THEN A$ = "Marcos looks at your strangely then says, " + Q$ + "Don't you be a-talking gibberesh to old Marcos, now, " + NA$ + "!" + Q$: GOSUB 10: PRINT : GOTO 2230
+ 2260  PRINT : GOTO 2590
+ 2270  PRINT :A$ = "Marcos smiles and says, " + Q$ + "Come back again soon, " + NA$ + "!" + Q$ + " as he shoos you out of his shop.": GOSUB 10: GOSUB 7000: GOTO 100
+ 2280  REM 
+
+SELL
+
+ 2285 A$ = "Marcos asks you, " + Q$ + "Is this weapon you want to sell me a standard weapon like I sell?" + Q$: GOSUB 10: PRINT : PRINT "(Hit Y or N) :";
+ 2290  GET A$: ON A$ <  > "Y" AND A$ <  > "N" GOTO 2290: PRINT A$: IF A$ = "Y" THEN 2440
+ 2310 P =  INT (50 / RT + 5):A$ = "Marcos says, " + Q$ + "Then I can only give you " +  STR$ (P) + " gold pieces for it, take it or leave it!" + Q$: PRINT : GOSUB 10: PRINT : PRINT "(Hit T or L) -->";
+ 2320  GET A$: ON A$ = "L" GOTO 100: ON A$ <  > "T" GOTO 2320: PRINT A$
+ 2340  PRINT :A$ = "Marcos says, " + Q$ + "Okay, what've ye got?" + Q$: GOSUB 10: PRINT : FOR A = 1 TO 4: IF WN$(A) <  > "NONE" THEN  PRINT A": ";WN$(A): NEXT :A = A - 1
+ 2345  PRINT : PRINT "Enter the # (1-"A")";: GET A$:W =  VAL (A$): ON W < 1 OR W > A GOTO 2345
+ 2350  PRINT W:X$ = WN$(W): IF WN$(W) = "NONE" THEN  PRINT :A$ = "Marcos frowns and says, " + Q$ + "You can't sell a weapon you don't own!" + Q$: GOSUB 10: GOSUB 7000: GOTO 100
+ 2360 L =  LEFT$ (X$,5) = "SWORD" OR  LEFT$ (X$,5) = "SPEAR" OR  LEFT$ (X$,4) = "MACE" OR  LEFT$ (X$,3) = "BOW" OR  LEFT$ (X$,3) = "AXE": IF  NOT L THEN 2380
+ 2370 A$ = "Marcos frowns at you and says, " + Q$ + "This is a weapon like I sell, remember?" + Q$: GOSUB 10: GOTO 7000: GOTO 100
+ 2380 A$ = "Marcos gives you your money and takes your weapon.": GOSUB 10:GO = GO + P: FOR W = W TO 4:A = W + 1:WN$(W) = WN$(A):WT%(W) = WT%(A):WO%(W) = WO%(A):WD%(W) = WD%(A):WS%(W) = WS%(A): NEXT :WN$(4) = "NONE"
+ 2400  PRINT :A$ = "Marcos asks you, " + Q$ + "How about buying a weapon?" + Q$: GOSUB 10: PRINT : PRINT "(Hit Y/N) :";
+ 2410  GET A$: ON A$ <  > "Y" AND A$ <  > "N" GOTO 2410: PRINT A$: ON A$ = "Y" GOTO 2080: GOTO 2220
+ 2440  PRINT :A$ = "Marcos asks, " + Q$ + "Well, what weapon you wanta return?" + Q$: GOSUB 10: GOSUB 2760
+ 2450  FOR W = 1 TO 4: IF  LEFT$ (WN$(W), LEN (N$)) <  > N$ THEN  NEXT :A$ = "Marcos laughs and says, " + Q$ + "You never bought one from me, remember?" + Q$: GOSUB 10: GOTO 2270
+ 2460 BP = BP + BP * (WO%(W) > 5) - BP / 2 * (WO%(W) <  - 5):P =  INT (BP / RT + .5): IF P > BP / 4 THEN P =  INT (BP / 4 + .5)
+ 2470 A$ = "Marcos examines your weapon and says, " + Q$ + "Well, you've banged it up a bit, but I can give you " +  STR$ (P) + " gold pieces for it, take it or leave it." + Q$: GOSUB 10: PRINT : PRINT "(Hit T or L) :";
+ 2490  GET A$: ON A$ <  > "T" AND A$ <  > "L" GOTO 2490: PRINT A$: ON A$ = "L" GOTO 2270: GOTO 2380
+ 2520  PRINT : FOR W = 1 TO 4: IF  MID$ ("ABMS",W,1) =  LEFT$ (X$,1) THEN  ON W GOTO 2540,2550,2560,2570
+ 2530  NEXT W
+ 2540 BP = 25: GOTO 2460
+ 2550 BP = 40: GOTO 2460
+ 2560 BP = 20: GOTO 2460
+ 2570  IF  MID$ (X$,2,1) = "P" THEN BP = 25: GOTO 2460
+ 2580 BP = 50: GOTO 2460
+ 2590  REM 
+
+ARMOR
+
+ 2595 A2 =  INT (AC / 2):SH = AC - A2 * 2:B1 = 25 * (A2 = 1) + 60 * (A2 = 2) + 100 * (A2 = 3):TI =  INT (B1 / RT + .5)
+ 2600 A$ = "Marcos takes you to the armour section of his shop and shows you suits of leather, chain, and plate armour.": GOSUB 10: IF TI > B1 * 2 THEN TI = B1 * 2
+ 2610  PRINT :A$ = "He says, " + Q$ + "I can put you in any of these very cheaply. I need " +  STR$ ( FN P(100)) + " GP for the leather, " +  STR$ ( FN P(250)) + " for the chain, and " +  STR$ ( FN P(500)) + " for the plate.": GOSUB 10: PRINT 
+ 2620  IF TI THEN A$ = Q$ + "Also, I can give you a trade-in on your old armour of " +  STR$ (TI) + " gold pieces.": GOSUB 10: PRINT 
+ 2630  PRINT Q$ + "Well, what will it be?" + Q$: PRINT : PRINT "(Hit N for nothing or L, C, or P) -->";
+ 2640  GET A$: FOR A = 1 TO 4: IF A$ <  >  MID$ ("NLCP",A,1) THEN  NEXT : GOTO 2640
+ 2650  PRINT A$: IF A = 1 THEN 2680
+ 2660 P =  FN P(100 * (A = 2) + 250 * (A = 3) + 500 * (A = 4)) - TI: IF P > GO THEN A$ = "Marcos frowns when he sees that you do not have enough to pay for your armour and says, " + Q$ + "I don't give credit!" + Q$: GOSUB 10: GOTO 2680
+ 2670 A$ = "Marcos takes your old armour and your gold and helps you into your new armour.": GOSUB 10:GO = GO - P:A2 = A - 1
+ 2680  IF SH THEN 2750
+ 2690 A$ = "Marcos smiles and says, " + Q$ + "Now how about a shield? I can let you have one for only " +  STR$ ( FN P(50)) + " gold pieces!" + Q$: GOSUB 10: PRINT : PRINT "Hit (Y/N) :";
+ 2710  GET A$: ON A$ <  > "Y" AND A$ <  > "N" GOTO 2710: PRINT A$: ON A$ = "N" GOTO 2750
+ 2730  PRINT : IF GO <  FN P(50) THEN A$ = "When he sees that you do not have enough gold to buy the shield, Marcos frowns and says, " + Q$ + "I'm sorry, but you know I don't give credit!" + Q$: GOSUB 10: GOTO 2750
+ 2740 GO = GO -  FN P(50):SH = 1:A$ = "Marcos takes your gold and gives you a shield.": GOSUB 10: PRINT 
+ 2750 AC = A2 * 2 + SH: GOTO 2270
+ 2760  PRINT : PRINT "(Hit a key, A, B, M, P, S, or (N)othing :";
+ 2770  GET A$: FOR A = 1 TO 6: IF A$ <  >  MID$ ("ABMPSN",A,1) THEN  NEXT : GOTO 2770
+ 2775  PRINT A$: IF A = 6 THEN  POP : FOR A = A TO A: NEXT : GOTO 100
+ 2780 W = A: FOR A = A TO A: NEXT : ON W GOTO 2790,2800,2810,2830,2850
+ 2790 N$ = "AXE":BP = 25:TP = 1:SI = 6: RETURN 
+ 2800 N$ = "BOW":BP = 40:TP = 2:SI = 6: RETURN 
+ 2810 N$ = "MACE":BP = 20:TP = 3:SI = 4: RETURN 
+ 2830 N$ = "SPEAR":BP = 25:TP = 4:SI = 5: RETURN 
+ 2850 N$ = "SWORD":BP = 50:TP = 5:SI = 8: RETURN 
+ 3000  REM 
+
+SPELLS
+
+ 3010  PRINT FF$: HOME : VTAB 5:A$ = "After a few minutes diligent searching, you find Hokas Tokas, the old mage. He looks at you and says, " + Q$ + "So you want old Tokey to teach you some magic, heh heh?": GOSUB 10
+ 3030  PRINT :A$ = Q$ + "Well, it'll cost you. Today my fees are:": GOSUB 10: PRINT :C2 = CH +  INT (11 *  RND (1) - 5):C2 = C2 + (C2 = 0):RT = 10 / C2
+ 3040  PRINT "  BLAST..." FN P(3000)"GP": PRINT "  HEAL...." FN P(1000)"GP": PRINT "  SPEED..." FN P(5000)"GP": PRINT "  POWER..." FN P(100)"GP": PRINT 
+ 3050  PRINT Q$"Well, which will it be?"Q$: PRINT : PRINT "(Hit a key, B, H, S, P, or (N)one :";
+ 3060  GET A$: IF A$ = "N" THEN 100
+ 3070  FOR SP = 1 TO 4: IF A$ <  >  MID$ ("BHSP",SP,1) THEN  NEXT : GOTO 3060
+ 3080  ON SP GOTO 3090,3100,3110,3120
+ 3090  PRINT "Blast":P =  FN P(3000): GOTO 3130
+ 3100  PRINT "Heal":P =  FN P(1000): GOTO 3130
+ 3110  PRINT "Speed":P =  FN P(5000): GOTO 3130
+ 3120  PRINT "Power":P =  FN P(100)
+ 3130  PRINT : IF P > GO THEN A$ = "When Hokas sees that you don't have enough to pay him, he stalks to the bar, muttering about youngsters who should be turned into frogs.": GOSUB 10: GOSUB 7000: GOTO 100
+ 3150  ON SA%(SP) <  > 0 GOTO 3165:GO = GO - P:SA%(SP) =  INT ( RND (1) * 50 + 26):A$ = "Hokas teaches you your spell, takes his fee, and returns to his stool on the bar. As you walk away, you hear him order a Double Dragon Blomb."
+ 3160  GOSUB 10: GOSUB 7000: GOTO 100
+ 3165 A$ = "Hokas says, " + Q$ + "I ought to take your gold anyway, but haven't you forgotten something? I already taught you that spell!" + Q$
+ 3170  GOSUB 10: PRINT :A$ = "Shaking his head sadly, he returns to the bar.": GOSUB 10: GOSUB 7000: GOTO 100
+ 4000  REM 
+
+BANKER
+
+ 4010  PRINT  CHR$ (12): HOME : VTAB 5
+ 4020 A$ = "You have no trouble spotting Shylock McFenney, the local banker, due to his large belly. You attract his attention, and he comes over to you.": GOSUB 10: PRINT 
+ 4030 A$ = Q$ + "Well, " + NA$ + ", my dear ": GOSUB 7010:A$ = A$ + "what a pleasure to see you! Do you want to make a deposit or a withdrawl?" + Q$: GOSUB 10
+ 4040  PRINT :A$ = "(You have " +  STR$ (GO) + " gold in hand, " +  STR$ (BA) + " in the bank.)": GOSUB 10: PRINT : PRINT "(Hit 'D' for Deposit, 'W' for Withdrawl) :";
+ 4050  GET A$: IF A$ = "D" THEN  PRINT A$: PRINT : GOTO 4140
+ 4060  IF A$ <  > "W" THEN 4050
+ 4070  PRINT A$: PRINT :A$ = "Shylock says, " + Q$ + "Well, you have " +  STR$ (BA) + " gold pieces stored with me. How many do you want to take back?" + Q$: GOSUB 10: PRINT 
+ 4080  INPUT "(Enter the number of gold pieces to withdraw) -->";A$:MN =  VAL (A$)
+ 4090  IF MN < 0 OR MN <  >  INT (MN) OR  STR$ (MN) <  > A$ THEN  PRINT :A$ = "The banker scowls and says, " + Q$ + "Come, come, you're not making sense! Try again!" + Q$: GOSUB 10: PRINT : GOTO 4080
+ 4100  IF (MN > BA) THEN  PRINT :A$ = "The banker throws you a terrible glance and says, " + Q$ + "That's more than you've got! You know I don't make loans to your kind!" + Q$ + " With that, he loses himself in the crowd.": GOSUB 10
+ 4120 GO = GO + MN:BA = BA - MN: PRINT :A$ = "The banker hands you your gold and says, " + Q$ + "That leaves you with " +  STR$ (BA) + " pieces in my care." + Q$: GOSUB 10
+ 4130  PRINT : PRINT "He shakes your hand and walks away.": PRINT : GOSUB 7000: GOTO 100
+ 4140 A$ = "Shylock gets a wide grin on his face and says, " + Q$ + "Good for you! How much do you want to deposit?" + Q$: GOSUB 10
+ 4150  PRINT : INPUT "(Enter the amount you want to deposit) -->";A$:MN =  VAL (A$)
+ 4160  IF MN < 0 OR MN <  >  INT (MN) OR  STR$ (MN) <  > A$ THEN  PRINT :A$ = "The banker scowls at you and says, " + Q$ + "Come, come, you're not making sense! Try again." + Q$: GOSUB 10: PRINT : GOTO 4150
+ 4170  IF MN > GO THEN  PRINT :A$ = "The banker was very pleased when you told him the sum, but when he discovered  that you didn't have that much on you, he walked away shouting about fools who play tricks on a kindly banker.": GOSUB 10
+ 4180  IF MN > GO THEN  PRINT : GOSUB 7000: GOTO 100
+ 4190 GO = GO - MN:BA = BA + MN:A$ = "Shylock takes your money, puts it in his bag, listens to it jingle, then thanks you and walks away.": GOSUB 10: PRINT : GOSUB 7000: GOTO 100
+ 5000  REM 
+
+DISPLAY 40 COL
+
+ 5010  FOR A = 1 TO 4:SP$(A) =  STR$ (SA%(A)) + "%": IF  NOT SA%(A) THEN SP$(A) = "None"
+ 5020  NEXT :A =  INT (AC / 2):SH = (A < AC / 2):A = (A < 5) * A + (A > 4) * 4:AR$ = AR$(A): IF SH THEN AR$ = AR$ + " & Shield"
+ 5025 EA =  - 5 * (AR * 2 <  > AC): IF AR THEN EA = EA - AR * 10: IF AR = 3 THEN EA = EA - 30
+ 5030  PRINT FF$: HOME :A$ = "You are the ": GOSUB 7040:A$ = A$ + NA$: GOSUB 10: PRINT : IF CP = 80 THEN 5500
+ 5040  VTAB 3: HTAB 20: PRINT "GOLD:": PRINT "HARDINESS:";: HTAB 12: PRINT HD;: HTAB 21: PRINT "IN HAND: "GO: PRINT "AGILITY:";: HTAB 12: PRINT AG;: HTAB 21: PRINT "IN BANK: "BA: PRINT "CHARISMA:";: HTAB 12: PRINT CH
+ 5050  HTAB 20: PRINT "WEAPON ABILITY:": PRINT "SPELL ABILITY:";: HTAB 21: PRINT "1.AXE:";: HTAB 30: PRINT WA%(1): PRINT " BLAST:";: HTAB 12: PRINT SP$(1);: HTAB 21: PRINT "2.BOW:";: HTAB 30: PRINT WA%(2)
+ 5060  PRINT " HEAL:";: HTAB 12: PRINT SP$(2);: HTAB 21: PRINT "3.CLUB:";: HTAB 30: PRINT WA%(3): PRINT " SPEED:";: HTAB 12: PRINT SP$(3);: HTAB 21: PRINT "4.SPEAR:";: HTAB 30: PRINT WA%(4)
+ 5070  PRINT " POWER:";: HTAB 12: PRINT SP$(4);: HTAB 21: PRINT "5.SWORD:";: HTAB 30: PRINT WA%(5)
+ 5080  PRINT : PRINT "ARMOR: "AR$: PRINT " EXPERTISE: "AE"%": PRINT : PRINT "WEAPON INFORMATION:"
+ 5090  PRINT "  NAME          TYPE  CMPLX   DMG   ODDS";: FOR W = 1 TO 4: IF  LEN (WN$(W)) > 18 THEN WN$(W) =  LEFT$ (WN$(W),18)
+ 5100  PRINT WN$(W) SPC( 18 -  LEN (WN$(W)))WT%(W) SPC( 6 -  LEN ( STR$ (WO%(W))))WO%(W)"%";
+ 5110  PRINT  SPC( 7 -  LEN ( STR$ (WD%(W)) + "D" +  STR$ (WS%(W))))WD%(W)"D"WS%(W);:A$ =  STR$ ((EA + AE) * ( - EA > AE) + WO%(W) + WA%(WT%(W)) + 2 * AG): PRINT  SPC( 5 -  LEN (A$))A$"%"
+ 5120  NEXT : GOSUB 7000: GOTO 100
+ 5500  REM 
+
+DISPLAY 80 COL
+
+ 5505 H = 1403: PRINT "Hardiness:  "HD;: POKE H,20: PRINT "Agility:  "AG;: POKE H,37: PRINT "Charisma:  "CH"   ";: PRINT "(Charm Mon: ";:A = (CH - 10) * 2: PRINT  MID$ ("+",(A < 1) * 1 + 1,1);A;"%)"
+ 5510  PRINT : PRINT "Weapon Abilities:";: POKE H,41: PRINT "Spell Abilities:"
+ 5520  PRINT " 1. Axe:   "WA%(1);: POKE H,42: PRINT "Blast..."SP$(1): PRINT " 2. Bow:   "WA%(2);: POKE H,42: PRINT "Heal...."SP$(2)
+ 5530  PRINT " 3. Mace:  "WA%(3);: POKE H,42: PRINT "Speed..."SP$(3): PRINT " 4. Spear: "WA%(4);: POKE H,42: PRINT "Power..."SP$(4): PRINT " 5. Sword: "WA%(5);
+ 5540  POKE H,24: PRINT "Gold: "GO;: POKE H,56: PRINT "In bank: "BA
+ 5550  PRINT : PRINT "Armour:  "AR$;: POKE H,34: PRINT "Armour Expertise:  "AE"%": PRINT : PRINT "Weight Carryable: ";:A = HD * 10: PRINT A" Gronds  ("A * 10" DOS)"
+ 5560  PRINT : PRINT "Weapon Names:";: POKE H,27: PRINT "Complexity:";: POKE H,47: PRINT "Damage:    Odds to Hit:": FOR A = 1 TO 71: PRINT "-";: NEXT : PRINT 
+ 5570  FOR W = 1 TO 4: IF WN$(W) = "NONE" THEN 5590
+ 5574  PRINT WN$(W); SPC( 31 -  LEN (WN$(W)));:A$ =  STR$ (WO%(W)) + "%": PRINT A$; SPC( 18 -  LEN (A$));:A$ =  STR$ (WD%(W)) + "D" +  STR$ (WS%(W))
+ 5575  PRINT A$; SPC( 14 -  LEN (A$));(EA + AE) * ( - EA > AE) + WO%(W) + WA%(WT%(W)) + 2 * AG;"%"
+ 5590  NEXT : GOSUB 7000: GOTO 100
+ 6000  REM 
+
+LEAVE
+
+ 6005 A$ = "As you leave the Hall, the Irishman comes up to you, slaps you on the back and says, " + Q$ + "Y'all come back now, ya heah?" + Q$: PRINT : GOSUB 10: PRINT 
+ 6010  PRINT O$"CHAR.EXT,L256": PRINT W$"CHAR.EXT,R"RE: GOSUB 200: PRINT O$"THE.ADVENTURER": PRINT W$"THE.ADVENTURER": PRINT NA$: PRINT RE: PRINT D$: PRINT C$: PRINT 
+ 6020  PRINT "HIT ANY KEY...";: POKE 49168,0: GET A$: PRINT : PRINT D$"-STARTUP"
+ 6030  END 
+ 7000  POKE 49168,0: PRINT : PRINT "(Hit any key to continue)";: GET A$: PRINT : RETURN 
+ 7010  IF SE$ = "M" THEN A$ = A$ + "boy ": RETURN 
+ 7020  IF SE$ = "F" THEN A$ = A$ + "girl ": RETURN 
+ 7030 A$ = A$ + "creature ": RETURN 
+ 7040  IF SE$ = "M" THEN A$ = A$ + "Mighty ": RETURN 
+ 7050  IF SE$ = "F" THEN A$ = A$ + "Fair ": RETURN 
+ 7060 A$ = A$ + "fearsome creature called ": RETURN 
+ 31000  REM 
+
+INIT DATA
+
+ 31010  FOR A = 0 TO 4: READ AR$(A): NEXT : GOSUB 34000:D$ =  CHR$ (4):Q$ =  CHR$ (34):FF$ =  CHR$ (12):O$ = D$ + "OPEN":R$ = D$ + "READ":W$ = D$ + "WRITE":C$ = D$ + "CLOSE"
+ 31015  READ NA: DIM AN$(NA,2): FOR X = 1 TO NA: READ AN$(X,1),AN$(X,2): NEXT 
+ 31020  PRINT O$"THE.ADVENTURER": PRINT R$"THE.ADVENTURER": INPUT NA$,RE: PRINT C$
+ 31025 CF$ = "CHAR.EXT":CL = 256: IF RE > 500 THEN CF$ = "CHARACTERS":CL = 150
+ 31030  PRINT O$;CF$",L"CL: PRINT R$;CF$",R"RE: INPUT NA$,HD,AG,CH: FOR X = 1 TO 4: INPUT SA%(X): NEXT : FOR X = 1 TO 5: INPUT WA%(X): NEXT : INPUT AE
+ 31040  INPUT SE$,GO,BA,AC: FOR W = 1 TO 4: INPUT WN$(W),WT%(W),WO%(W),WD%(W),WS%(W): NEXT : PRINT C$: FOR X = 1 TO 4: IF WN$(X) = "" THEN WN$(X) = "NONE"
+ 31050  NEXT : DEF  FN P(X) =  INT (X * RT + .5): ON RE < 500 GOTO 100:RE = RE - 500: GOTO 100
+ 34000  REM 
+
+80 COL?
+
+ 34020  TEXT : HOME :CP = 80: PRINT  CHR$ (4)"PR#3": PRINT :SP$ = "      ": RETURN 
+ 34090  DATA Clothes,Leather,Chain Mail,Plate Mail,Magic/Exotic
+ 36000  DATA   34,THE BEGINNER'S CAVE,E001,LAIR OF THE MINOTAUR,E002
+ 36010  DATA THE CAVE OF THE MIND,E003,THE ZYPHUR RIVERVENTURE,E004,CASTLE OF DOOM,E005,THE DEATH STAR,E006,THE DEVIL'S TOMB,E007
+ 36020  DATA THE ABDUCTOR'S QUARTERS,E008,ASSAULT ON THE CLONE MASTER,E009,THE MAGIC KINGDOM,E010,THE TOMB OF MOLINAR,E011
+ 36030  DATA THE BLACK DEATH,E020,PRIESTS OF XIM!,E043,THE SEWERS OF CHICAGO,E060,THE HARPY CLOUD,E061
+ 36040  DATA DHARMAQUEST,E074,TEMPLE OF THE GUILD,E075,THE PRINCE'S TAVERN,E078,CASTLE OF COUNT FUEY,E079,SEARCH FOR THE KEY/RESCUE MISSION,E080
+ 36045  DATA CAMP EAMON,E106,ASSAULT ON DOLNI KEEP,E124,JOURNEY TO JOTUNHEIM,E148,WALLED CITY OF DARKNESS,E150
+ 36050  DATA PATHETIC HIDEOUT OF MR. R.,E157,THE LAIR OF MR. ED,E158,ATTACK OF THE KRETONS,E194
+ 36060  DATA  EYE OF AGAMON,E217,ADVENTURE IN INTERZONE,E225,BOOKWORM 3-D,E226,FIENDS OF EAMON,E237,THE HEART OF GOLD,E997
+ 36070  DATA  REDEMPTION,E998,EDGAR'S ADVENTURES,E999

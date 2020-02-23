@@ -1,0 +1,21 @@
+ 1  REM #60 THE SEWERS OF CHICAGO
+
+ 10  REM 
+
+INIT
+
+ 11 K = 0
+ 20 D$ =  CHR$ (4):A$ = D$ + "OPENEAMON.":S$ = D$ + "READEAMON.":S2$ = D$ + "CLOSE":A = 0:M = 2:K = A:RO = 3:NA = A:NM = A
+ 30  PRINT A$"DESC": PRINT S$"DESC": INPUT NR,NZ,A,NM: PRINT S2$:K = 128:NA = NZ + 4: DIM A$(NA),A%(NA,8),M$(NM),M%(NM,14),SA%(3),S2%(3),SM$(2),BV$(9,2),WA%(5),W$(5),R$(NR),R%(NR,6)
+ 40  PRINT A$"ARTIFACTS,L"K: FOR A = 1 TO NZ: PRINT S$"ARTIFACTS,R"A: INPUT A$(A): FOR A2 = 1 TO 8: INPUT A%(A,A2): NEXT : IF A%(A,2) = M OR A%(A,2) = RO THEN L = L + 1
+ 50  NEXT : PRINT A$"MONSTERS,L"K: FOR M = 1 TO NM: PRINT S$"MONSTERS,R"M: INPUT M$(M): FOR A = 1 TO 12: INPUT M%(M,A): NEXT : NEXT : PRINT S2$: READ NC: DIM C$(NC): FOR A = 1 TO NC: READ C$(A): NEXT 
+ 60  PRINT A$"ROOMS,L64": PRINT A$"ROOM.NAME,L64": FOR A = 1 TO NR: PRINT S$"ROOMS,R"A: FOR M = 1 TO 6: INPUT R%(A,M): NEXT : PRINT S$"ROOM.NAME,R"A: INPUT R$(A): NEXT : PRINT S2$
+ 70 RO = 1:R2 = 1:ND = 6: FOR A = 0 TO 2: READ SM$(A): NEXT : FOR A = 0 TO 9: FOR A2 = 0 TO 2: READ BV$(A,A2): NEXT : NEXT : FOR A = 1 TO 5: READ W$(A): NEXT 
+ 80 L = L + 4: DIM V%(L):L = 0
+ 90 Q$ =  CHR$ (34):M%(0,9) =  - 1:M%(0,14) = 3: FOR M = 1 TO NM:M%(M,14) = 1: NEXT 
+ 95  FOR M = 19 TO 24:M%(M,14) = 2: NEXT :M%(7,14) = 0: FOR M = 16 TO 18:M%(M,14) = 0: NEXT :M%(21,14) = 0:M%(5,14) = 2
+ 100 A$ = "":S$ = A$:S2$ = A$:M% = NM:A% = NA: PRINT D$"STORE FAST.START"
+ 9000  DATA 29,North,South,East,West,Up,Down,Get,Drop,Look,Examine,Read,Ready,Drink,Attack,Flee,Give,Request,Inventory,Blast,Heal,Power,Speed,Smile,Say,Short,Help,Save,Resume,Quit
+ 9010  DATA growls at,ignores,smiles at
+ 9020  DATA  bite,tear,lunge,swing,chop,swing,shoot,shoot,shoot,swing,swing,swing,stab,lunge,jab,swing,chop,stab,swat,slap,swat,buzze,buzze,buzze,speeds toward,careens toward,skids toward,attacks,attacks,attacks
+ 9030  DATA axe,bow,club,spear,sword

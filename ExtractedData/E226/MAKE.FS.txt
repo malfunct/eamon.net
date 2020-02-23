@@ -1,0 +1,19 @@
+ 10  REM //BOOKWORM 3-D
+
+ 20  REM 
+
+INIT
+
+ 30  POKE 216,0:D$ =  CHR$ (4): IF  PEEK (103) +  PEEK (104) * 256 <  > 2338 THEN  POKE 768, PEEK (103): POKE 769, PEEK (104): POKE 103,34: POKE 104,9: POKE 2337,0: PRINT D$"-MAKE.FS"
+ 40 A$ = D$ + "OPENEAMON.":S$ = D$ + "READEAMON.":CZ$ = D$ + "CLOSE":A = 0:M = 2:RO = 3:NA =  PEEK (768):NM =  PEEK (769): PRINT D$"BLOADSEARCH.RTN": PRINT D$"-EAMON.UTILS": POKE 768,NA: POKE 769,NM
+ 50  PRINT A$"DESC": PRINT S$"DESC": INPUT NR,NZ,A,NM,LR,W,K: PRINT CZ$:NA = NZ + 6: DIM A$(NA),A%(NA,8),M$(NM),M%(NM,13),SA%(3),S2%(3),SM$(2),BV$(5,2),RB$(5,1),WA%(5),FX(30)
+ 60  PRINT A$"ARTIFACTS,L"K: FOR A = 1 TO NZ: PRINT S$"ARTIFACTS,R"A: INPUT A$(A): FOR A2 = 1 TO 8: INPUT A%(A,A2): NEXT : IF A%(A,2) = M OR A%(A,2) = RO THEN L = L + 1
+ 70  NEXT : PRINT A$"MONSTERS,L"W: FOR M = 1 TO NM: PRINT S$"MONSTERS,R"M: INPUT M$(M): FOR A = 1 TO 11: INPUT M%(M,A): NEXT :M%(M,12) = M%(M,3): NEXT : PRINT CZ$: READ NC: DIM C$(NC): FOR A = 1 TO NC: READ C$(A): NEXT 
+ 80 RO = 1:R2 = 1:W2 = 0:ND = 6: FOR A = 0 TO 2: READ SM$(A): NEXT : FOR A = 0 TO 5: FOR A2 = 0 TO 2: READ BV$(A,A2): NEXT : NEXT : FOR A = 0 TO 5: FOR A2 = 0 TO 1: READ RB$(A,A2): NEXT : NEXT 
+ 90 W2 = A%(M%(0,8),6):L = L + 4: DIM V%((L > NR) * L + (NR > L) * NR)
+ 100 M% = NM:A% = NZ
+ 110  PRINT D$"FRE": PRINT D$"STORE FAST.START"
+ 120  DATA 35,North,South,East,West,Up,Down,Get,Drop,Look,Examine,Attack,Flee,Give,Inventory,Blast,Heal,Power,Speed,Smile,Say,Read,Ready,Save,Light,Open,Put,Drink,Free,Request,Wear,Remove,Use,Resume,TrollsFire,Password
+ 130  DATA Leather,Chain,Plate
+ 140  DATA lunge,tear,claw,swing,chop,swing,shoot,shoot,shoot,swing,swing,swing,stab,lunge,jab,swing,chop,stab
+ 150  DATA Miss,Miss,Parri,Miss,Miss,Miss,Parri,Miss,Parri,Miss,Parri,Miss

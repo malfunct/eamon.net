@@ -1,0 +1,443 @@
+ 1  GOTO 31000: REM 
+
+EAMON ADVENTURE #4
+THE ZYPHUR RIVERVENTURE
+BY JIM JACOBSON
+
+EAMON ADVENTURER'S GUILD
+7625 HAWKHAVEN DR.
+CLEMMONS, NC 27012
+
+ 5  REM MP6SUBV6 - REV. 5 DEC 94
+
+ 8  PRINT D$"FRE": & A,A$: GOTO 10
+ 9  IF  LEFT$ (A$,1) = " " THEN A$ =  MID$ (A$,2): GOTO 9
+ 10  IF  LEN (A$) <  = CP THEN  PRINT A$: FOR K = K TO K: NEXT : GOTO 52
+ 11  FOR K = CP TO 1 STEP  - 1: IF  MID$ (A$,K,1) = " " THEN  PRINT  LEFT$ (A$,K - 1):A$ =  RIGHT$ (A$, LEN (A$) - K): GOSUB 52: GOTO 9
+ 12  NEXT : PRINT "WORD TOO LONG": STOP 
+ 15  RETURN 
+ 45  PRINT D$"FRE": PRINT D$"READEAMON.DESC,R"R: INPUT A$: PRINT D$: GOSUB 8
+ 51  PRINT 
+ 52 L = L + 1: GOTO 58
+ 54 L = L + 1
+ 56 L = L + 2: PRINT 
+ 58  IF L < 23 THEN  RETURN 
+ 59  POKE 49168,0: PRINT "[MORE] ";: GET Z$: PRINT : VTAB  PEEK (37): PRINT  SPC( 6): PRINT : VTAB  PEEK (37):L = 0: ON Z$ <  >  CHR$ (3) GOTO 15: POP : STOP 
+ 60  PRINT  CHR$ (12): HOME :L = 0: RETURN 
+ 62  GOSUB 45:L = L - 1: VTAB  PEEK (37): RETURN 
+ 64  GOSUB 56: GOTO 300
+ 65  GOSUB 8: GOTO 100
+ 66  GOSUB 8: GOTO 300
+ 67  GOSUB 8: GOTO 51
+ 69 WT = WT - A%(A,3) * (A%(A,4) =  - 1): RETURN 
+ 70 M%(0,9) = A:M%(0,10) = (EA + AE) * ( - EA > AE) + WA%(A%(A,6)) + A%(A,5) + 2 * M%(0,2): RETURN 
+ 90 A$ = "The " + A$(A) + " is locked.": GOTO 65
+ 91  PRINT "You don't have it and it's not here.": GOTO 99
+ 94 A$ = "You can't " + C$(C) + " " + S$ + ".": GOTO 65
+ 96  PRINT "Nobody here by that name!"
+ 99  GOSUB 56
+ 100  REM 
+
+YOU SEE
+
+ 110  GOSUB 51: ON  NOT LS GOTO 120:A%(LS,5) = A%(LS,5) - 1:M = A%(LS,5): IF  NOT M THEN  PRINT "Your "A$(LS)" has gone out!":LS = 0:LT = NL: GOTO 99
+ 115  IF M < 10 THEN  PRINT "Your "A$(LS)" is almost out!": GOSUB 56: GOTO 120
+ 117  IF M < 20 THEN  PRINT "Your "A$(LS)" grows dim!": GOSUB 56
+ 120  IF SP THEN SP = SP - 1: IF  NOT SP THEN M%(0,2) = M%(0,2) / 2: PRINT "Your speed spell has just expired!":A = M%(0,9): ON A > 0 GOSUB 70: GOSUB 56
+ 122  FOR A = 0 TO 3: IF S2%(A) < SA%(A) THEN S2%(A) = S2%(A) * 1.1: IF S2%(A) > SA%(A) THEN S2%(A) = SA%(A)
+ 125  NEXT : IF  NOT LT THEN  PRINT "It's too dark to see.": GOSUB 56: GOTO 210
+ 130  PRINT "You are": PRINT " "R$(RO): GOSUB 56: IF  NOT R%(RO,0) THEN R%(RO,0) = 1:R = RO: GOSUB 45
+ 135  IF RO = 16 THEN DI = 1: GOTO 32000
+ 137  IF M%(4,5) > 20 THEN M%(4,5) =  INT ( RND (1) * 19 + 2): IF M%(4,5) = RO THEN  GOSUB 3650
+ 140  FOR M = 1 TO NM:C% = M: & S,A,R%,M%(C%,5),C%,M%:M = C%: IF  NOT M THEN M = NM: NEXT : GOTO 160
+ 145  IF  NOT M%(M,0) THEN M%(M,0) = 1:R = M + 300: GOSUB 62: PRINT "("M$(M)" is here.)": GOSUB 56: NEXT : GOTO 160
+ 150  PRINT M$(M)" is here.": GOSUB 52: NEXT 
+ 160  FOR A = 1 TO NA:C% = A: & S,A,R%,A%(C%,4),C%,A%:A = C%: IF  NOT C% THEN A = NA: NEXT : GOTO 210
+ 162  IF A > NZ OR A = 22 THEN  PRINT "Your "A$(A)" is here.": GOSUB 52: NEXT : GOTO 210
+ 165  IF  NOT A%(A,0) THEN A%(A,0) = 1:R = A + 100: GOSUB 62: PRINT "(You see "A$(A)".)": GOSUB 56: NEXT : GOTO 210
+ 170  PRINT "You see "A$(A)".": GOSUB 52: NEXT 
+ 210  GOSUB 51: INPUT "Your command? ";A$:L = 0: GOSUB 51: IF A$ <  > "" THEN  ROT= 1: & A,A$: ROT= ID
+ 215  IF  LEFT$ (A$,1) = " " THEN A$ =  MID$ (A$,2): GOTO 215
+ 220  IF A$ = "" THEN A$ = CZ$: VTAB  PEEK (37) - 1: HTAB 15: POKE 1403,15: PRINT A$: PRINT 
+ 225  ON A$ = "" GOTO 275:CZ$ = A$: FOR A = 2 TO  LEN (A$): IF  MID$ (A$,A,1) <  > " " THEN  NEXT 
+ 230 V$ =  LEFT$ (A$,A - 1):S$ =  MID$ (A$,A + 1)
+ 240 A$ = S$:F = 0:S2$ = "": FOR A = 1 TO  LEN (S$): IF  MID$ (S$,A,1) <  > " " THEN  NEXT : GOTO 270
+ 245 S2$ =  MID$ (S$,A + 1):S$ =  LEFT$ (S$,A - 1):Z$ =  LEFT$ (S2$,3): IF Z$ = "TO " OR Z$ = "ON " OR Z$ = "IN " THEN F = 1:S2$ =  MID$ (S2$,4): GOTO 265
+ 260 Z$ =  LEFT$ (S2$,5): IF Z$ = "FROM " OR Z$ = "WITH " THEN F = 1:S2$ =  MID$ (S2$,6)
+ 265  IF  NOT F THEN S$ = A$:S2$ = ""
+ 270  FOR A = A TO A: NEXT : & S,S,V$,C$,C%:C = C%: IF C AND C <  = NC THEN 290
+ 275  PRINT "Valid Commands:": PRINT : FOR C = 1 TO NC: PRINT C$(C),: NEXT : PRINT : GOTO 210
+ 290  ON C < 5 GOTO 3000: ON C - 4 GOTO 4000,5000,6500,6000,19000,17000,20000,22000,7000,8000,25000,10000,11000,12000,14000,15000,21000,18000,18500
+ 294  PRINT "Attack non-enemy?"
+ 295  INPUT "  (Y/N)?";S$: ON S$ = "" GOTO 295: GOSUB 4920: ON S$ <  > "Y" AND S$ <  > "N" GOTO 295:L = 1: PRINT : RETURN 
+ 300  REM 
+
+PICK FOE
+
+ 310 T(1) = T(1) * (T(1) > 0): ON  NOT T(1) GOTO 500: GOSUB 51: FOR M = 1 TO NM:C% = M: & S,A,R%,M%(C%,5),C%,M%:M = C%: IF  NOT M THEN M = NM: NEXT : GOTO 500
+ 330  IF M%(M,14) = 2 THEN  NEXT : GOTO 500
+ 333  ON M%(M,13) / M%(M,1) *  RND (1) * 100 <  = M%(M,4) GOTO 350: PRINT M$(M)" flees!": GOSUB 56: IF  NOT NX THEN  PRINT "But can't find an exit!": GOSUB 56: NEXT : GOTO 500
+ 340  GOSUB 8510:M%(M,5) = R2: GOSUB 3650: GOTO 490
+ 350 OF = M:DF = 0: ON M%(M,14) = 3 GOTO 400: ON T(3) = M%(0,1) GOTO 480: FOR K = 1 TO NM:C% = K: & S,A,R%,M%(C%,5),C%,M%: IF  NOT C% THEN K = NM: GOTO 380
+ 375 K = C%: IF M%(K,14) = 3 THEN  IF  RND (1) < .25 THEN DF = K:K = NM
+ 380  NEXT : GOTO 480
+ 400 C% = 1
+ 410  & S,A,R%,M%(C%,5),C%,M%: IF M%(C%,14) <  > 1 THEN C% = C% + 1: GOTO 410
+ 415 DF = C%: IF DF = NM THEN 480
+ 420  FOR K = DF + 1 TO NM:C% = K: & S,A,R%,M%(C%,5),C%,M%: IF  NOT C% THEN K = NM: GOTO 430
+ 425 K = C%: IF M%(K,14) = 1 THEN  IF  RND (1) < .25 THEN DF = K:K = NM
+ 430  NEXT 
+ 480  GOSUB 7500
+ 490  IF  NOT T(1) THEN M = NM
+ 495  NEXT 
+ 500  ON T(1) > 0 GOTO 520: FOR M = 1 TO NM:C% = M: & S,A,R%,M%(C%,5),C%,M%:M = C%: IF  NOT M THEN M = NM: NEXT : GOTO 520
+ 510 OF = M: ON M%(M,9) < 0 GOSUB 7400: NEXT 
+ 520  REM 
+
+SPECIAL STUFF
+
+ 900  GOTO 100
+ 3000  REM 
+
+MOVE
+
+ 3010 R2 = R%(RO,C): IF T(1) THEN  IF NL OR LT THEN A$ = "You can't do that with unfriendlies about!": GOTO 65
+ 3040  IF R2 > 0 AND R2 <  = NR THEN  ON R%(R2,5) < 2 OR A%(22,4) = RO GOTO 3500: PRINT "You would drown!": GOTO 99
+ 3050  REM 
+
+SPECIAL MOVES
+
+ 3060  IF R2 =  - 99 THEN  PRINT "You successfully ride off": PRINT "  into the sunset.":DI = 0: GOTO 32000
+ 3390  PRINT "You can't go that way!": GOTO 99
+ 3500  REM 
+
+GO
+
+ 3570 R3 = RO:RO = R2:R% = RO: GOSUB 3600: IF R%(RO,5) = 2 OR R%(R3,5) = 2 THEN A%(22,4) = RO
+ 3580 NX = 0: FOR A = 1 TO 4:NX = NX + (R%(RO,A) > 0 AND R%(RO,A) <  = NR): NEXT :NL = R%(RO,5):LT = NL OR LS: GOTO 100
+ 3600  REM 
+
+MONS FOLLOW?
+
+ 3610 D% = R3: FOR K = 1 TO NM:C% = K: & S,A,D%,M%(C%,5),C%,M%:K = C%: IF  NOT K THEN K = NM: NEXT : GOTO 3650
+ 3620  IF M%(K,14) = 3 THEN M%(K,5) = RO: NEXT : GOTO 3650
+ 3630  IF M%(K,14) = 1 THEN  IF  RND (1) * 100 < M%(K,4) THEN M%(K,5) = RO
+ 3640  NEXT 
+ 3650  REM 
+
+SET UP T(X)
+
+ 3660 T(1) = 0:T(3) = M%(0,1): FOR K = 1 TO NM:C% = K: & S,A,R%,M%(C%,5),C%,M%:K = C%: IF  NOT K THEN K = NM: NEXT : RETURN 
+ 3670  IF  NOT M%(K,14) THEN RL% = M%(K,3) + (CH - 10 / 2) * (M%(K,3) > 0):M%(K,14) = 1 + (RL% >  RND (1) * 100) + (RL% >  RND (1) * 100)
+ 3680 X = M%(K,14):T(X) = T(X) + M%(K,1): NEXT : RETURN 
+ 4000  REM 
+
+GET
+
+ 4010  GOSUB 4900: ON S$ = "ALL" GOTO 4100:HA = RO: GOSUB 4805: ON  NOT F GOTO 94: GOSUB 4200: GOTO 64
+ 4100  FOR A = 1 TO NA:C% = A: & S,A,R%,A%(C%,4),C%,A%:A = C%: IF  NOT C% THEN A = NA: NEXT : GOTO 300
+ 4130  GOSUB 4200: NEXT : GOTO 64
+ 4200  REM 
+
+RESULTS OF GET
+
+ 4210  IF A = 7 THEN A%(7,4) = 0:M%(14,5) = RO:R = 201: POP : GOSUB 45: GOSUB 3650: GOTO 300
+ 4220  PRINT A$(A)" ";: IF A%(A,3) > 900 OR A%(A,2) = 8 THEN  PRINT "cannot be moved.": GOTO 52
+ 4230  IF WT + A%(A,3) > 10 * M%(0,1) THEN  PRINT "is too heavy.": GOTO 52
+ 4250  PRINT "taken.":A%(A,4) =  - 1:WT = WT + A%(A,3): IF M%(0,9) < 1 THEN  IF A%(A,2) = 2 OR A%(A,2) = 3 THEN  GOSUB 70: PRINT : PRINT A$(A)" readied.":L = L + 1: GOTO 54
+ 4290  GOTO 52
+ 4700  REM 
+
+MONS SEARCH
+
+ 4710 SL =  LEN (S$):F = 0:C% = 0:D% = 0: & S,S,S$,M$,C%: IF  NOT C% THEN  IF SL > 1 THEN  IF  RIGHT$ (S$,1) = "S" THEN S$ =  LEFT$ (S$,SL - 1): GOTO 4710
+ 4720  IF  NOT C% THEN  RETURN 
+ 4730 D% = C%:X = C%: IF M%(X,5) <  > RO THEN 4760
+ 4740 F = F + 1: IF F = 1 THEN M = X
+ 4750  IF  LEN (M$(X)) = SL THEN M = X: RETURN 
+ 4760  & S,R: IF C% <  > D% THEN 4730
+ 4770  RETURN 
+ 4800  REM  
+
+ARTIF SEARCH
+
+ 4801 HA =  - 1:WH = HA:EM = HA: GOTO 4810
+ 4804 HA =  - 1
+ 4805 WH = RO:EM = RO + 200
+ 4810 SL =  LEN (S$):F = 0:C% = 0:D% = 0: & S,S,S$,A$,C%: IF  NOT C% THEN  RETURN 
+ 4820  FOR X = 1 TO NA
+ 4830 D% = C%:A2 = A%(C%,4): IF A2 = WH OR A2 = HA OR A2 = EM THEN F = F + 1:A = C%: IF  LEN (A$(A)) = SL THEN X = NA: NEXT : RETURN 
+ 4850  & S,R: IF C% <  > D% THEN  NEXT : RETURN 
+ 4860 X = NA: NEXT : IF F > 1 THEN A$ = "Which " + Q$ + S$ + Q$ + " do you mean?": POP : GOTO 65
+ 4870  RETURN 
+ 4900  REM 
+
+GET S$
+
+ 4905  IF  NOT LT THEN  POP : GOTO 100
+ 4910  IF S$ = "" THEN  PRINT : PRINT C$(C)" who or what";: INPUT S$: PRINT :L = 0: GOTO 4910
+ 4920  ROT= 1: & A,S$: ROT= ID: RETURN 
+ 5000  REM 
+
+DROP
+
+ 5010  GOSUB 4900: ON S$ = "ALL" GOTO 5100: GOSUB 4801: ON  NOT F GOTO 91: GOSUB 5200: GOTO 300
+ 5100 D% =  - 1: FOR A = 1 TO NA:C% = A: & S,A,D%,A%(C%,4),C%,A%:A = C%: IF  NOT C% THEN A = NA: GOTO 5120
+ 5110  GOSUB 5200
+ 5120  NEXT :WT = 0:M%(0,9) =  - 1: GOTO 64
+ 5200  IF A = M%(0,9) THEN M%(0,9) =  - 1
+ 5210 WT = WT - A%(A,3):A%(A,4) = RO: PRINT A$(A)" dropped.": ON A <  > LS GOTO 52:LS = 0:LT = NL: PRINT : PRINT "The "A$(A)" goes out.": GOTO 54
+ 6000  REM 
+
+EXAMINE
+
+ 6010  GOSUB 4900: GOSUB 4804: ON  NOT F GOTO 6050: IF A%(A,4) = EM THEN A%(A,4) = RO
+ 6020  IF A > NZ THEN  PRINT "This is your "A$(A)".": GOTO 64
+ 6040 R = A + 100: GOSUB 45:A%(A,0) = 1: GOTO 300
+ 6050  GOSUB 4700: IF  NOT F THEN  PRINT "You see nothing special.": GOTO 64
+ 6060 R = M + 300: GOSUB 45
+ 6070 DF = M: GOSUB 7650: GOTO 300
+ 6500  REM 
+
+LOOK
+
+ 6510  IF RO = 48 THEN  PRINT "You find a hidden passage to the east!": GOSUB 56
+ 6590 R = RO: GOSUB 45: GOTO 300
+ 7000  REM 
+
+ATTACK
+
+ 7010  IF M%(0,9) < 1 THEN  PRINT "You have no weapon ready!": GOTO 100
+ 7020  GOSUB 4900: GOSUB 4700: IF  NOT F THEN 96
+ 7300  IF M%(M,14) <  > 1 THEN  GOSUB 294: IF S$ <  > "Y" THEN 100
+ 7305 OF = 0:DF = M: GOSUB 7500: IF  NOT HI THEN 7360
+ 7310  IF UP THEN W = A%(M%(0,9),6):WA%(W) = WA%(W) + 2:A$ = M$(0) + "'s " + W$(W - 1) + " ability increased!":A = M%(0,9): GOSUB 70: GOSUB 67
+ 7320  ON  - EA <  = AE GOTO 7360: ON  INT ( RND (1) * 100 + 1) <  = M%(0,10) GOTO 7360:A = (EA + AE <  >  - 1) + 1:AE = AE + A:M%(0,10) = M%(0,10) + A:A$ = M$(0) + "'s Armour Expertise increased by " +  STR$ (A) + "!": GOSUB 67
+ 7360  ON M%(DF,14) = 1 GOTO 300:M%(DF,3) = 1 + (M%(DF,14) = 3) * 25:M%(DF,14) = 0: GOSUB 3650: GOTO 300
+ 7400  REM 
+
+MONS P/U WEAP
+
+ 7410 X =  ABS (M%(OF,9)) - 1: IF X > 0 AND X <  = NZ THEN  IF A%(X,4) = RO THEN 7460
+ 7420 X = 0: FOR W = 1 TO NA:C% = W: & S,A,R%,A%(C%,4),C%,A%:W = C%: IF  NOT W THEN W = NA: NEXT : GOTO 7460
+ 7430  IF A%(W,2) < 2 OR A%(W,2) > 3 THEN  NEXT : GOTO 7460
+ 7440  IF X THEN  IF A%(W,7) * A%(W,8) < A%(X,7) * A%(X,8) THEN  NEXT : GOTO 7460
+ 7450 X = W: NEXT 
+ 7460 D% = K: IF X THEN A$ = M$(OF) + " picks up " + A$(X) + ".": GOSUB 8:A%(X,4) =  - OF - 1:M%(OF,9) = X: GOTO 51
+ 7470  RETURN 
+ 7500  REM 
+
+DO BATTLE
+
+ 7505 HI = 0:W = M%(OF,9): ON W < 0 GOTO 7400:A%(0,7) = M%(OF,11):A%(0,8) = M%(OF,12)
+ 7507 A$ = M$(OF) + " " + BV$(A%(W,6), RND (1) * 3) + "s at " + M$(DF) + "...": GOSUB 8: PRINT " --- ";:RL% =  RND (1) * 100 + 1:HI = 0: IF (RL% < 5 OR RL% < M%(OF,10) - M%(DF,7)) AND RL% < 96 THEN HI = 1
+ 7520  ON HI GOTO 7600: IF RL% < 97 THEN  PRINT "Missed!": GOTO 56
+ 7525  PRINT "Fumbled!": GOSUB 52:RL% =  RND (1) * 100 + 1: IF RL% < 36 OR  NOT W THEN  PRINT "...Fumble Recovered.": GOTO 56
+ 7530  IF RL% < 61 THEN A$ = M$(OF) + " drops " + A$(W) + "!":A%(W,4) = RO:M%(OF,9) =  - W - 1:WT = WT - A%(W,3) * ( NOT DF): GOTO 67
+ 7532  IF A%(W,2) = 3 THEN A$ = "Sparks fly from " + A$(W) + "!": GOTO 67
+ 7540  ON RL% > 95 GOTO 7550: PRINT "...Weapon Broken!": GOSUB 52:A%(W,4) = 0:M%(OF,9) =  - 1:WT = WT - A%(W,3) * ( NOT DF): IF RL% > 10 THEN 51
+ 7545  PRINT "Broken weapon hits user!": GOSUB 52
+ 7550  IF RL% < 100 THEN D = A%(W,7):S = A%(W,8):DF = OF:A = 1: GOTO 7635
+ 7560 D = A%(W,7) * 2:S = A%(W,8):DF = OF:A = 0: GOTO 7635
+ 7600 UP = ( INT ( RND (1) * 100 + 1) > M%(OF,10)):M%(OF,10) = M%(OF,10) + 2 * UP
+ 7602  IF DF = 14 THEN RL% = 20: ON  NOT M%(OF,9) GOTO 7650: GOTO 7540
+ 7605 D = A%(W,7):S = A%(W,8):A = 1: IF RL% > 5 THEN  PRINT "A hit! ---": GOSUB 52: GOTO 7635
+ 7610  PRINT "A critical hit!": GOSUB 52:RL% =  RND (1) * 100 + 1: IF RL% < 51 THEN A = 0: GOTO 7635
+ 7615  IF RL% < 86 THEN S = 1.5 * S: GOTO 7635
+ 7620  IF RL% < 96 THEN D = 2 * D: GOTO 7635
+ 7625 D = 3 * D: GOTO 7635
+ 7635 D2 = 0: FOR K = 1 TO D:D2 = D2 +  INT (S *  RND (1) + 1): NEXT :D2 = D2 - A * M%(DF,8): IF D2 < 1 THEN  PRINT "**Armour absorbs damage!": GOTO 56
+ 7640 M%(DF,13) = M%(DF,13) + D2: IF M%(DF,13) >  = M%(DF,1) THEN 7700
+ 7650  PRINT M$(DF)" is ";: ON  INT (M%(DF,13) * 5 / M%(DF,1)) + 2 - ( NOT M%(DF,13)) GOTO 7652,7655,7660,7665,7670,7675
+ 7652  PRINT "in perfect health.": GOTO 56
+ 7655  PRINT "in good shape.": GOTO 56
+ 7660  PRINT "hurting.": GOTO 56
+ 7665  PRINT "in pain.": GOTO 56
+ 7670  PRINT "badly injured.": GOTO 56
+ 7675  PRINT "at death's door,": PRINT "  knocking loudly.": GOTO 54
+ 7700  REM 
+
+MONSTER DIES
+
+ 7710  PRINT M$(DF)" is dead!": IF  NOT DF THEN  POP :DI = 1: GOTO 32000
+ 7730 M%(DF,5) = 0:M%(DF,13) = 0: IF M%(DF,9) <  = NA AND M%(DF,9) > 0 THEN M%(DF,9) =  - M%(DF,9) - 1
+ 7735 X =  - DF - 1: FOR K = 1 TO NA: IF A%(K,4) = X THEN A%(K,4) = RO
+ 7790  NEXT :K = M%(DF,14):T(K) = T(K) - M%(DF,1): GOTO 56
+ 8000  REM 
+
+FLEE
+
+ 8010  IF  NOT T(1) THEN  PRINT "Calm down.": GOTO 99
+ 8020  IF  NOT NX THEN  PRINT "There's no place to run!": GOTO 99
+ 8040  ON S$ = "" GOTO 8500: & S,S,S$,C$,C%:D = C%: ON  NOT D OR D > 4 GOTO 8500:R2 = R%(RO,D): GOTO 3040
+ 8500  GOSUB 8510: GOTO 3500
+ 8510 R2 = R%(RO, RND (1) * 4 + 1): ON R2 < 1 OR R2 > NR GOTO 8510: RETURN 
+ 10000  REM 
+
+INVEN
+
+ 10010 M = 0: ON S$ = "" GOTO 10100: GOSUB 4900: GOSUB 4700: ON  NOT F GOTO 96: ON M%(M,14) > 1 GOTO 10100: FOR M = M TO M: GOTO 15030
+ 10100  PRINT M$(M)" is carrying:": GOSUB 56:W = 0:D% =  - M - 1: FOR A = 1 TO NA:C% = A: & S,A,D%,A%(C%,4),C%,A%:A = C%: IF  NOT C% THEN A = NA: GOTO 10130
+ 10120 W = 1: PRINT " "A$(A);: IF A = M%(M,9) THEN  PRINT " [Ready Weapon]";
+ 10125  IF A = LS THEN  PRINT " (Providing Light)";
+ 10130  GOSUB 51: NEXT : IF  NOT W THEN  PRINT " (Nothing)": GOSUB 56
+ 10140  IF  NOT M THEN  PRINT GO" gold pieces.": GOSUB 56
+ 10150 DF = M: GOSUB 7650: GOTO 300
+ 11000  REM 
+
+BLAST
+
+ 11010  GOSUB 4900: GOSUB 4700: ON  NOT F GOTO 96: IF M%(M,14) <  > 1 THEN  GOSUB 294: IF S$ = "N" THEN 100
+ 11020 S = 0: GOSUB 11500: PRINT "Direct hit!": GOSUB 56: ON M = 14 GOTO 26000:S = 5:D = 2:DF = M:A = 0: GOSUB 7635: GOTO 7360
+ 11500 W = 0: IF SA%(S) THEN D% =  RND (1) * 100 + 1:W = (((D% < S2%(S)) OR (D% < 5)) AND (D% < 95))
+ 11510  IF D% = 100 THEN A$ = "Spell backlash! You temporarily forget how to cast " + C$(C) + "!": POP : GOTO 66
+ 11520  IF  NOT W THEN  PRINT "Nothing happened.": POP : GOTO 64
+ 11530 D% =  RND (1) * 100 + 1: IF D% > S2%(S) THEN S2%(S) = S2%(S) + 2:SA%(S) = SA%(S) + 2:A$ = M$(0) + "'s " + C$(C) + " ability increases!": GOSUB 67
+ 11540 S2%(S) = S2%(S) * .8: RETURN 
+ 12000  REM 
+
+HEAL
+
+ 12010 M = 0: ON S$ <  > "" GOSUB 4700: ON  NOT F AND S$ <  > "" GOTO 96: ON  NOT M%(M,13) GOTO 10150:S = 1: GOSUB 11500: PRINT M$(M)"'s health improves!": GOSUB 56
+ 12020 M%(M,13) = M%(M,13) - 3 - 10 *  RND (1):M%(M,13) = M%(M,13) * (M%(M,13) > 0): GOTO 10150
+ 14000  REM 
+
+SPEED
+
+ 14010  IF SP THEN  PRINT "Nothing happened.": GOTO 64
+ 14020 S = 2: GOSUB 11500:M%(0,2) = M%(0,2) * 2:SP =  INT ( RND (1) * 25 + 10):A = M%(0,9): ON A > 0 GOSUB 70:A$ = "You can feel the new agility flowing through you!":A = M%(0,9): ON A > 0 GOSUB 70: GOTO 66
+ 15000  REM 
+
+SMILE
+
+ 15010  FOR M = 1 TO NM:C% = M: & S,A,R%,M%(C%,5),C%,M%:M = C%: IF  NOT M THEN M = NM: NEXT : GOTO 300
+ 15030  PRINT M$(M)" "SM$(M%(M,14) - 1)" you.": GOSUB 52: NEXT : GOTO 300
+ 17000  REM 
+
+READY
+
+ 17010  GOSUB 4900: GOSUB 4801: ON  NOT F GOTO 91: IF A%(A,2) < 2 OR A%(A,2) > 3 THEN  PRINT "That isn't a weapon!": GOTO 99
+ 17100  GOSUB 70: PRINT A$(A)" readied.": GOTO 64
+ 18000  REM 
+
+SAVE
+
+ 18010  PRINT "Save this game?": GOSUB 295: ON S$ <  > "Y" GOTO 100: PRINT D$"STORESAVED.GAME": GOTO 100
+ 18500  REM 
+
+RESUME GAME
+
+ 18510  PRINT "Resume saved game?": GOSUB 295: IF S$ = "N" THEN 100
+ 18520  ONERR  GOTO 18550
+ 18530  SCALE= CP: PRINT D$"RESTORESAVED.GAME":CZ$ = "":CP =  PEEK (231):ID =  PEEK (249): POKE 216,0: GOTO 100
+ 18550  POKE 216,0: PRINT "Load error " PEEK (222): PRINT : IF  PEEK (222) = 6 THEN  PRINT "There is no saved game.":L = 99: ON  NOT DI GOTO 100: GOTO 32000
+ 18560  PRINT D$"CLOSE": END 
+ 19000  REM 
+
+LIGHT
+
+ 19010  GOSUB 4910: GOSUB 4801: ON  NOT F GOTO 91: IF A%(A,2) <  > 5 OR A%(A,5) < 1 THEN  PRINT "It won't light.": GOTO 64
+ 19050 LT = 1:LS = A: PRINT "You've lit the "A$(A)".": GOTO 64
+ 20000  REM 
+
+OPEN
+
+ 20010  GOSUB 4900: GOSUB 4804: ON  NOT F GOTO 91: IF A%(A,2) <  > 4 OR A%(A,8) THEN S$ = "the " + A$(A): GOTO 94
+ 20040 A%(A,8) = 1: PRINT "Opened.": GOSUB 56: PRINT A$(A)" contained:": GOSUB 56:X = 0
+ 20110 A$ = "   ":D% = 100 + A: FOR M = 1 TO NA:C% = M: & S,A,D%,A%(C%,4),C%,A%:M = C%: IF  NOT M THEN M = NA: GOTO 20130
+ 20120 A$ = A$ + A$(M) + ", ":X = 1:A%(M,4) = RO
+ 20130  NEXT : IF  NOT X THEN  PRINT " (Nothing.)": GOTO 64
+ 20140 A$ =  LEFT$ (A$, LEN (A$) - 2) + ".": GOTO 66
+ 21000  REM 
+
+EAT
+
+ 21010  GOSUB 4900: GOSUB 4804: ON  NOT F GOTO 91: IF A <  > 17 THEN S$ = "the " + A$(A): GOTO 94
+ 21020  GOSUB 69:A%(A,4) = 0:M%(0,13) = 0:DF = 0: GOSUB 7650: GOTO 300
+ 22000  REM 
+
+DRINK
+
+ 22010  GOSUB 4900: GOSUB 4804: ON  NOT F GOTO 91: IF A%(A,2) <  > 6 THEN S$ = "the " + A$(A): GOTO 94
+ 22020  GOSUB 69:A%(A,4) = 0:K = A - 7:M%(0,K) = M%(0,K) + 1: IF K = 3 THEN CH = CH + 1
+ 22030 A$ = "You feel an increase in your " +  MID$ ("hardiness.agility.  charisma.",(K - 1) * 10 + 1,10): GOTO 66
+ 25000  REM 
+
+REQUEST
+
+ 25010  GOSUB 4900:A$ = S$:S$ = S2$
+ 25020  IF S$ = "" THEN  INPUT "From whom?";S$: ON S$ <  > "" GOSUB 4920:L = 0: PRINT : GOTO 25020
+ 25030  GOSUB 4700: ON  NOT F GOTO 96:S$ = A$:WH =  - M - 1:HA = WH:EM = WH: GOSUB 4810: IF  NOT F THEN A$ = M$(M) + " doesn't have it.": GOTO 65
+ 25040  FOR M = M TO M: ON M%(M,14) < 3 GOTO 15030: NEXT :M = M - 1: PRINT "Okay.": GOSUB 56: GOSUB 4220: IF A = M%(M,9) THEN M%(M,9) =  - 1
+ 25050 R = A + 100: ON  NOT A%(A,0) GOSUB 45:A%(A,0) = 1: GOTO 300
+ 26000  REM 
+
+BLAST ROCK MONSTER
+
+ 26010 M%(M,13) = M%(M,13) +  RND (1) * 6 + 1: IF M%(M,13) >  = M%(M,1) THEN  PRINT "The "M$(M)" crumbles to dust!":M%(M,5) = 0: GOSUB 3650: GOTO 300
+ 26020  PRINT M$(M)" is ";: ON M%(M,13) / 3 GOTO 26040,26050,26060: GOTO 26060
+ 26040  PRINT "crumbling.": GOSUB 56: GOTO 300
+ 26050  PRINT "cracking.": GOSUB 56: GOTO 300
+ 26060  PRINT "lightly chipped.": GOSUB 56: GOTO 300
+ 31000  REM 
+
+INIT
+
+ 31010  POKE 216,0:D$ =  CHR$ (4): PRINT  CHR$ (26)"1": PRINT  CHR$ (21): TEXT : HOME : IF  PEEK (103) +  PEEK (104) * 256 <  > 2338 THEN  POKE 768, PEEK (103): POKE 769, PEEK (104): POKE 103,34: POKE 104,9: POKE 2337,0: PRINT "RELOCATING...": PRINT D$"-MAIN.PGM"
+ 31020  GOSUB 34000: PRINT D$"RESTOREFAST.START":X =  PEEK (768):K =  PEEK (769): PRINT D$"BLOADSEARCH.RTN": PRINT D$"-EAMON.UTILS": POKE 768,X: POKE 769,K
+ 31030  PRINT D$"OPENFRESH.MEAT": PRINT D$"READFRESH.MEAT": INPUT RE,M$(0),M%(0,1),M%(0,2),CH: FOR A = 0 TO 3: INPUT SA%(A):S2%(A) = SA%(A): NEXT : FOR A = 1 TO 5: INPUT WA%(A): NEXT : INPUT AE,SE$,GO,BA,AC
+ 31040 NA = NZ: FOR A = NZ + 1 TO NZ + 4: INPUT A$(A),A%(A,6),A%(A,5),A%(A,7),A%(A,8)
+ 31050  IF A$(A) <  > "" AND A$(A) <  > "NONE" THEN NA = NA + 1:A%(A,2) = 2 + (A%(A,7) * A%(A,8) > 20):A%(A,3) = 2:A%(A,4) =  - 1:WT = WT + 2
+ 31060  NEXT : PRINT D$"CLOSE":CP =  PEEK (231):ID =  PEEK (249): ROT= ID: IF ID THEN  & P,:D$ =  CHR$ (4)
+ 31070  FOR W = NZ + 1 TO NA:K = W:A$ = A$(W):C% = 0: & S,S,A$,A$,C%
+ 31080 A = C%: ON  NOT C% OR A > NZ GOTO 31090: IF  LEN (A$(A)) =  LEN (A$) THEN A$(A) = A$(A) + "#": GOTO 31070
+ 31085  & S,R: GOTO 31080
+ 31090  NEXT :M =  INT (AC / 2): IF M * 2 <  > AC THEN M%(0,8) = 1:EA =  - 5
+ 31100  IF M THEN M%(0,8) = M%(0,8) + M:EA = EA - M * 10: IF M = 3 THEN M%(0,8) = M%(0,8) + 2:EA = EA - 30
+ 31110  IF NA > NZ THEN A = NZ + 1: GOSUB 70
+ 31120  IF ID THEN  FOR A = 1 TO NZ: & A,A$(A): NEXT : FOR M = 1 TO NM: & A,M$(M): NEXT : FOR A = 1 TO NC: & A,C$(A): NEXT : FOR A = 0 TO 2: & A,SM$(A): NEXT 
+ 31130  IF ID THEN  FOR A = 0 TO 5: FOR A2 = 0 TO 2: & A,BV$(A,A2): NEXT : NEXT : FOR A = 0 TO 4: & A,W$(A): NEXT : FOR A = 1 TO NR: & A,R$(A): NEXT 
+ 31140 A% = NA: GOSUB 60: VTAB 24: PRINT D$"OPENEAMON.DESC,L256"
+ 31500  REM 
+
+BUY BOAT
+
+ 31510 R = 202: GOSUB 45: IF GO < 200 THEN  PRINT "YOU CAN'T AFFORD IT.": GOTO 32000
+ 31520  PRINT "Hit (P) to pay or (L) to leave. ";: GET S$: PRINT S$: ON S$ <  > "" GOSUB 4920: ON S$ <  > "P" AND S$ <  > "L" GOTO 31520: IF S$ = "L" THEN 32000
+ 31530 GO = GO - 200: PRINT :R = 203: GOSUB 45: IF  RND (1) < .05 THEN R = 204: GOSUB 45: GOTO 31500
+ 31540  GOTO 3500
+ 32000  REM 
+
+DONE
+
+ 32010  PRINT : GOSUB 59: IF SP THEN M%(0,2) = M%(0,2) / 2
+ 32020  ON  NOT DI GOTO 32040: GOSUB 60: PRINT "Now what?": PRINT : PRINT "1. Resume the saved game": PRINT "2. Start over": PRINT "3. Give up and accept death."
+ 32030  PRINT : INPUT "Enter 1-3: ";A$:K =  VAL (A$): ON K < 1 OR K > 3 GOTO 32000: ON K = 1 GOTO 18520: PRINT D$"CLOSE": ON K = 3 GOTO 32500: CLEAR : RUN 
+ 32040  ROT= 1: FOR A = 1 TO NA: & A,A$(A): NEXT : ROT= ID: FOR A = 1 TO 4:V%(A) = 0: NEXT :A$(0) = "NONE": FOR A = 5 TO 8:A%(0,A) = 0: NEXT 
+ 32050 W = 0:D% =  - 1: FOR A = 1 TO NA:C% = A: & S,A,D%,A%(C%,4),C%,A%:A = C%: IF  NOT C% THEN A = NA: NEXT : GOTO 32080
+ 32060  IF A%(A,2) = 2 OR A%(A,2) = 3 THEN W = W + 1:V%(W) = A:A%(A,4) = 0
+ 32070  NEXT 
+ 32080  ON W < 5 GOTO 32300: GOSUB 60:A$ = "As you enter the Main Hall, Lord William Missilefire approaches and says, " + Q$ + "You  have too many weapons -- 4 is the legal limit." + Q$: GOSUB 8: GOSUB 59
+ 32090  GOSUB 60: PRINT "Your weapons are:": GOSUB 56: FOR A = 1 TO W: PRINT  SPC( 4)A" - "A$(V%(A)): GOSUB 52: NEXT : GOSUB 51: PRINT "Enter # of weapon to sell (1-"W")": GOSUB 52
+ 32100  INPUT "    >";A$:M =  VAL (A$): IF M < 1 OR M > W OR M <  >  INT (M) THEN  VTAB  PEEK (37): GOTO 32100
+ 32110 A%(V%(M),4) =  - 1:W = W - 1: ON M = W + 1 AND W > 4 GOTO 32090:V%(M) = V%(W + 1): ON W > 4 GOTO 32090
+ 32300  GOSUB 60:L = 4:A$ = "You deliver your goods to Sam Slicker, the local buyer of treasure.  He looks them over and pays you...": GOSUB 67:TP = 0: FOR A = 1 TO NA: IF A%(A,4) <  >  - 1 THEN  NEXT : FOR A = A TO A: GOTO 32320
+ 32310 M =  INT (A%(A,1) * ((A%(A,2) <  > 0) * CH / 10 + (A%(A,2) = 0))): IF M > 0 THEN  PRINT M" gold pieces for the "A$(A)".": GOSUB 54:TP = TP + M
+ 32320  NEXT :TP =  INT (TP):GO = (GO + TP) * (GO > 0): GOSUB 51: PRINT "He pays you ";: IF TP < 1 THEN  PRINT "nothing.": GOSUB 56: GOTO 32335
+ 32330  PRINT TP" gold pieces total.": GOSUB 56
+ 32335  IF M%(9,5) = RO THEN GO = GO + 500:A$ = "You are rewarded 500 gold pieces for the safe return of Professor Axom.": GOSUB 67
+ 32340  PRINT D$"CLOSE":A$ = D$ + "DELETE": PRINT D$"OPENFRESH.MEAT": PRINT D$"CLOSE": PRINT A$"FRESH.MEAT": PRINT D$"STORESAVED.GAME": PRINT A$"SAVED.GAME": GOSUB 59
+ 32500  ONERR  GOTO 32510
+ 32510  PRINT D$"CLOSE": PRINT  CHR$ (26)"1": PRINT  CHR$ (21): HOME 
+ 32520  PRINT D$"PREFIX/": PRINT D$"PREFIX": INPUT S$: PRINT D$"PREFIX"S$: PRINT D$"VERIFYCHARACTERS": POKE 216,0
+ 32530 A$ = "THE.ADVENTURER":S$ = "CHARACTERS,": IF DI THEN  PRINT D$"OPEN"A$: PRINT D$"CLOSE": PRINT D$"DELETE"A$: GOTO 32900
+ 32540  PRINT D$"OPEN"S$"L150": PRINT D$"WRITE"S$"R"RE: PRINT M$(0): PRINT M%(0,1): PRINT M%(0,2): PRINT CH: FOR A = 0 TO 3: PRINT SA%(A): NEXT : FOR A = 1 TO 5: PRINT WA%(A): NEXT : PRINT AE
+ 32550  PRINT SE$: PRINT GO: PRINT BA: PRINT AC: FOR A = 1 TO 4:W = V%(A): PRINT A$(W): PRINT A%(W,6): PRINT A%(W,5): PRINT A%(W,7): PRINT A%(W,8): NEXT 
+ 32560  PRINT D$"OPEN"A$: PRINT D$"WRITE"A$: PRINT M$(0): PRINT RE: PRINT D$"CLOSE"
+ 32900  POKE 103, PEEK (768): POKE 104, PEEK (769): POKE  PEEK (103) +  PEEK (104) * 256 - 1,0: PRINT D$"-MAIN.HALL"
+ 34000  REM 
+
+80 COL?
+
+ 34010  HOME : POKE 49168,0: PRINT "80 COLUMN DISPLAY? ";: GET Z$: PRINT Z$: ON Z$ <  > "Y" AND Z$ <  > "N" GOTO 34010: IF Z$ = "Y" THEN  PRINT D$"PR#3": PRINT : SCALE= 80: ROT= 0: RETURN 
+ 34020  SCALE= 40: ROT= 0: PRINT "DO YOU NEED A CAPS-ONLY DISPLAY?": PRINT "(Y/N) :";: GET A$: ON A$ <  > "Y" AND A$ <  > "N" GOTO 34020: PRINT A$: ON A$ = "N" GOTO 15: ROT= 1: RETURN 

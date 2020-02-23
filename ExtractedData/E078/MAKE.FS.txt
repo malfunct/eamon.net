@@ -1,0 +1,24 @@
+ 1  REM #78 THE PRINCE'S TAVERN
+
+ 10  REM 
+
+SET UP VAR. TABLE
+
+ 20 A = 0:M = A:K = 72:W = 92:C% = M:RO = 1:R% = A:CP = 40:D$ =  CHR$ (4):DF = M:OF = M:NZ = M:NA = M:NM = M:A$ = D$ + "OPENEAMON.":S$ = D$ + "READEAMON.":R2 = 1:R = M:S = M:D% = M:L = M:AC = M:WT = M:A% = M:M% = M
+ 30  REM 
+
+INIT
+
+ 50 CZ$ = D$ + "CLOSE": PRINT A$"DESC": PRINT S$"DESC": INPUT NR,NZ,A,NM: PRINT CZ$:K = 128:NA = NZ + 5: DIM A$(NA),A%(NA,8),M$(NM),M%(NM,14),SA%(3),S2%(3),SM$(2,2),BV$(5,2),WA%(5),W$(4),T(3),CO$(4),CM$(3)
+ 60  PRINT A$"ARTIFACTS,L"K: FOR A = 1 TO NZ: PRINT S$"ARTIFACTS,R"A: INPUT A$(A): FOR A2 = 1 TO 8: INPUT A%(A,A2): NEXT : IF A%(A,2) = M OR A%(A,2) = RO THEN L = L + 1
+ 70  NEXT : PRINT A$"MONSTERS,L"K: FOR M = 1 TO NM: PRINT S$"MONSTERS,R"M: INPUT M$(M): FOR A = 1 TO 12: INPUT M%(M,A): NEXT : NEXT : PRINT CZ$: READ NC: DIM C$(NC): FOR A = 1 TO NC: READ C$(A): NEXT 
+ 80 RO = 1:R2 = 1: FOR A = 0 TO 2: FOR K = 0 TO 2: READ SM$(A,K): NEXT : NEXT : FOR A = 0 TO 5: FOR K = 0 TO 2: READ BV$(A,K): NEXT : NEXT : FOR A = 0 TO 4: READ W$(A): NEXT 
+ 85  READ ND: DIM DR$(ND),DP%(ND),DC%(ND): FOR K = 1 TO ND: READ DR$(K),DP%(K),DC%(K): NEXT :L = L + 4: DIM V%((L > NR) * L + (NR > L) * NR):L = 0
+ 90 Q$ =  CHR$ (34):M%(0,9) =  - 1:M%(0,14) = 3:A$ = "":S$ = A$:CZ$ = A$:M% = NM:NA = NZ:A% = NA
+ 100 DR = 22:HK = 0:FW = 0:BF = 0:VL = 1:GB = 1:M%(13,14) = 2:M%(14,14) = 2:M%(25,14) = 2:M%(18,14) = 2:M%(30,14) = 2:M%(32,14) = 2:M%(6,14) = 2
+ 110  PRINT D$"STORE FAST.START"
+ 9000  DATA 31,North,South,East,West,Up,Down,Get,Drop,Look,Examine,Read,Ready,Unlock,Drink,Attack,Flee,Give,Request,Inventory,Blast,Heal,Power,Speed,Smile,Say,Eat,Order,Pay,Use,Save,Resume
+ 9010  DATA growls at,sneers at,spits at,ignores,looks at,ignores,smiles at,grins at,smiles at
+ 9020  DATA lunge,tear,claw,swing,chop,swing,shoot,shoot,shoot,swing,swing,swing,stab,lunge,jab,swing,chop,stab
+ 9030  DATA axe,bow,club,spear,sword
+ 9040  DATA 14,Seven-7,4,2,Martini,5,3,Manhatten,7,3,Beer,3,2,Whiskey Sour,4,3,Whiskey Seven,5,2,Vodka Sour,5,3,Wallbanger,6,2,Wine,3,2,Screwdriver,5,2,Rum,4,3,Brandy,4,2,Rum & Coke,4,3,Suicide,9,6

@@ -1,0 +1,87 @@
+ 10  HGR2 : PRINT "-REDEMPTION.PIC": FOR A = 1 TO 2000: NEXT : TEXT 
+ 20  POKE 49168,0:N$ = "REDEMPTION":D$ =  CHR$ (4): TEXT : PRINT D$"PR#3": PRINT :L1 =  INT ((80 -  LEN (N$)) / 2):L2 = 80 -  LEN (N$) - L1: GOSUB 860: GOTO 130
+ 30 A$ = "": VTAB V: POKE 1403,H - 1
+ 40  PRINT " " CHR$ (8);: IF  PEEK (49152) < 128 THEN  PRINT "_" CHR$ (8);: GOTO 40
+ 50 T =  PEEK (49152) - 128: POKE 49168,0: IF T = 127 THEN T = 8
+ 60  IF T = 24 THEN  POKE 1403,H - 1: PRINT  SPC(  LEN (A$) + 1): POKE 1403,H - 1:A$ = "": GOTO 40
+ 70  IF T = 27 THEN  POKE 1403,H - 1: PRINT  SPC(  LEN (A$) + 1): POKE 1403,H - 1: PRINT :A$ = "": RETURN 
+ 80  IF T = 8 THEN  IF  LEN (A$) = 1 THEN A$ = "": PRINT  CHR$ (8);: GOTO 40
+ 90  IF T = 8 THEN  IF  LEN (A$) THEN A$ =  LEFT$ (A$, LEN (A$) - 1): PRINT  CHR$ (8);: GOTO 40
+ 100  IF T = 13 THEN  PRINT : RETURN 
+ 110  IF T >  = 32 THEN  IF  LEN (A$) < IW THEN A$ = A$ +  CHR$ (T): PRINT  CHR$ (T);: GOTO 40
+ 120  PRINT  CHR$ (7);: GOTO 40
+ 130  PRINT "   You see now that it had been a really boneheaded idea in the first place.": PRINT 
+ 140  PRINT "   The Slavers are nowhere in sight.  It seems you've finally given them the    slip.  That's the good news.  The bad news is, you have no idea where you are,"
+ 150  PRINT "and although you could probably find your way back the way you came, the Slaverswould get you.  If you had your armour, weapons, your warhorse.....but you've"
+ 160  PRINT "got nothing.  And even if you could manage to get past the Slavers, whether by  stealth or force, you'd probably be executed by the King's soldiers the minute"
+ 170  PRINT "you got home.  You've been in the Slavers' hands for some time, but not long    enough to expect that the King has by now forgiven you.": PRINT 
+ 180  PRINT "   And why should he?  It really was a boneheaded idea."
+ 190 X = 1: GOSUB 840: HOME : INVERSE : PRINT  SPC( 80);: NORMAL : PRINT 
+ 200  PRINT  SPC( 19)"WELCOME TO THE EAMON FANTASY GAMING SYSTEM": PRINT 
+ 210  GOSUB 870: PRINT : PRINT  SPC( 30)"R E D E M P T I O N": PRINT 
+ 220  PRINT : PRINT : PRINT : PRINT : PRINT 
+ 230  PRINT : GOSUB 870
+ 240  PRINT  SPC( 25)"Press 'S' to skip introduction": PRINT  SPC( 25)"Press any other key to continue": PRINT 
+ 250  INVERSE : PRINT  SPC( 79);: NORMAL : GET B$: PRINT B$: PRINT : IF B$ = "S" OR B$ = "s" THEN  HOME : GOTO 830
+ 260  GOSUB 860: PRINT "                                 AUTHOR'S NOTES": PRINT 
+ 270  PRINT "   This adventure can be mapped using a grid system, provided that you map the  wilderness separately from the towns.  The map is so simple, however, that you  should consider mapping optional.": PRINT 
+ 280  PRINT "   This is not as challenging an adventure as someone might expect of me, but itdoes require that you pay attention to what people say to you.  There is no "
+ 290  PRINT "single 'right' way to complete the adventure, although you will of course have  to do some things before others.  Feel free to pursue whatever element of the"
+ 300  PRINT "plot interests you at a particular time.": GOSUB 840
+ 310  PRINT "Some notes on commands:": PRINT : PRINT 
+ 320  PRINT "GIVE - to give money, just enter a number (the amount you wish to give)."
+ 330  PRINT : PRINT "LOOK summons the full room description.  If directions are listed in the short       description, then those are the only directions you can go from there.": PRINT 
+ 340  PRINT "EXAMINE recalls an artifact's description.  It also identifies artifacts that      are 'embedded' in the room description which you might normally ignore."
+ 350  PRINT : PRINT "     There is one embedded artifact.  It isn't a trivial item, so                    don't worry about examining every little thing.  There is also                  an item that appears normally but must be examined."
+ 360  PRINT : PRINT "HEAL - the chance of success decreases the more times you use it.  Eventually          your power will give out and you'll have to find other sources of               healing.": PRINT 
+ 370  GOSUB 840: PRINT "  One more hint:  there is a 'secret' exit in one room that is only mentioned   in one of the monster descriptions -- so don't ignore them!": PRINT : VTAB 7
+ 380  PRINT "                              Enjoy the adventure!": PRINT : PRINT 
+ 390  PRINT "           - Sam Ruby, 1718 41st Avenue, San Francisco, CA, 94122.": PRINT : VTAB 16: GOSUB 870
+ 400  PRINT : PRINT  SPC( 10)"Redemption was created with the Eamon Gaming System."
+ 410  PRINT  SPC( 10)"Originally published on Softdisk #137 -- April 1993"
+ 430  PRINT : GOSUB 840: VTAB 12
+ 440  PRINT "Enter the name you wish to use for your character: ";:V = 12:H = 52:IW = 20: GOSUB 30:M$ = A$
+ 450  PRINT D$"OPENCHAR.NAME": PRINT D$"WRITECHAR.NAME": PRINT M$: PRINT D$"CLOSE": GOSUB 860
+ 460  PRINT "   It all started when you returned to your home kingdom after a prolonged      period of adventuring.  In your absence, a humongous dragon named Argon had"
+ 470  PRINT "taken up residence near the steamy crater of Mount Collapso.  A particularly    greedy and glutonous dragon, Argon had nearly decimated the kingdom through his"
+ 480  PRINT "destructive marauding.  There was hardly a horse, pig, sheep, goat, or cow left in the nation.  Argon had also amassed quite a hoard of treasure at the expense"
+ 490  PRINT "of your countrymen.": PRINT 
+ 500  PRINT "   The King's warriors and wizards were soundly trounced in one battle after    another.  Argon, a dragon of few words, cryptically informed them in the midst"
+ 510  PRINT "of one skirmish that he was fated to die while asleep, not in combat.  This was confirmed by an independent prophesizing firm commissioned by the King. "
+ 520  PRINT "Naturally the Royal Guard attempted to infiltrate Argon's lair and dispatch him while he was napping.  Unfortunately, what Argon lacked in eloquence he more"
+ 530  PRINT "than made up for in wariness; the King's men always found his cave blocked off  by a large, immovable boulder."
+ 540  PRINT 
+ 550  PRINT "   Enter you and your hair-brained scheme.": GOSUB 840
+ 560  PRINT "   Recalling an ancient legend about the downfall of a certain city, and hoping to take advantage of Argon's love of treasure, you advised the King to build a"
+ 570  PRINT "giant, golden statue of a cow (Argon's favorite appetizer), adorned with all    kinds of precious stones.  Hidden in the statue would be a secret compartment"
+ 580  PRINT "in which you would hide.  Wheel it outside the city, you told the King, and     Argon will take it back to his cavern, thinking it some pathetic (but shiny)"
+ 590  PRINT "form of tribute or appeasement.  Then, while the dragon slept, you would leap   out and kill him with your awesome weaponry.": PRINT 
+ 600  PRINT "   The King, with whom you held considerable favor, accepted your advice and didas you suggested.  It pained him to take such a drastically expensive course of"
+ 610  PRINT "action, but he trusted you, and after all, he'd get the statue back once the    dragon was dead."
+ 620  PRINT 
+ 630  PRINT "   But on the night in which the plan was put into motion, you had been partyingwith some friends from out of town.  You showed up at the gates with your "
+ 640  PRINT "scabbard, but not your sword!  In the darkness, none of the engineers noticed.  They simply tucked you into your compartment, where you promptly passed out."
+ 650  GOSUB 840
+ 660  PRINT "   Early the next morning Argon came calling, and sure enough, he was immensely amused and pleased with the Golden Cow.  Just as you had anticipated, he took it";
+ 670  PRINT "back to his cave (stopping along the way to munch on a caravan's horses) and    sealed himself inside.": PRINT 
+ 680  PRINT "   By this time you had discovered your mistake, so you got out of the statue   and prepared to escape when Argon next left his lair.  You were"
+ 690  PRINT "successful in doing so, but you forgot to close the trap door to the secret     comparment behind you.  When Argon returned, he figured out what had been"
+ 700  PRINT "tried, and in a fit of rage he took the statue, flew high above the  royal city,and with unerring precision dropped it on the palace.  Adding insult to injury,"
+ 710  PRINT "he retrieved the statue and deposited it in the sulfurous lake in the crater of Mount Collapso."
+ 720  GOSUB 840
+ 730  PRINT "   Needless to say, the King was furious.  Here he was in the middle of the     greatest national emergency since the Ale Revolt of 1093, and you had"
+ 740  PRINT "convinced him to melt down half his treasury to build that stupid...thing which now lay at the bottom of a bubbling, boiling, volcanic cesspool!  Plus he was"
+ 750  PRINT "catching hell from the Queen for losing her favorite diamond necklace!": PRINT 
+ 760  PRINT "   In a quick show trial you were convicted of Treasonous Negligence of the     Highest Degree.  Since you woefully lacked the moolah needed to repay the King,"
+ 770  PRINT "you were turned over to the Slavers, who would see that you spent the rest of   your natural life underground in the Western Mines.  The King even set his"
+ 780  PRINT "Clerics about the task of committing your supernatural life to this fate as     well.": PRINT 
+ 790  GOSUB 840
+ 800  PRINT "   Since your escape, you have been wandering east through a wide valley of     plains.  Over the last three days you have passed by several farms.  Now you see";
+ 810  PRINT "the gate to a small village surrounded by a wooden, lightly fortified wall.     You take a breath, step through the gate, and pray that somewhere in this new"
+ 820  PRINT "land you may find the means to your redemption."
+ 830  PRINT D$"-MAIN.PGM"
+ 840  VTAB 23: INVERSE : PRINT  SPC( 27);"PRESS ANY KEY TO CONTINUE"; SPC( 27);: GET B$: NORMAL : PRINT : IF B$ =  CHR$ (27) THEN 830
+ 850  IF X = 1 THEN X = 0: RETURN 
+ 860  HOME : INVERSE : PRINT  SPC( L1);N$; SPC( L2): NORMAL : PRINT : RETURN 
+ 870  INVERSE : PRINT  SPC( 80);: NORMAL : PRINT : RETURN 
+ 880  VTAB 10: HTAB 2: PRINT "YOU NEED 80 COLUMNS TO RUN REDEMPTION!": PRINT : HTAB 11: PRINT "PRESS A KEY TO EXIT.": GET A$: PRINT D$"BYE"

@@ -1,0 +1,96 @@
+ 1  REM 
+
+EAMON HARD DRIVE IMAGE
+BY FRANK KUNZE 12/23/02
+
+ 10 D$ =  CHR$ (4): PRINT D$"PREFIX": INPUT P$: PRINT D$"PREFIX"P$
+ 20  PRINT  CHR$ (26)"1": PRINT  CHR$ (21): TEXT : HOME : INVERSE : PRINT  SPC( 40): VTAB 23: HTAB 1: PRINT  SPC( 40);: FOR X = 2 TO 22: VTAB X: HTAB 1: PRINT " ": VTAB X: HTAB 40: PRINT " ": NEXT 
+ 30  VTAB 1: HTAB 1: PRINT "\";: HTAB 40: PRINT "/": VTAB 23: HTAB 1: PRINT "/";: HTAB 40: PRINT "\";: POKE 34,1: POKE 33,38: POKE 32,1: POKE 35,22: NORMAL 
+ 40  HOME : GOSUB 500: PRINT : PRINT "  EAMON MASTER DISK & BEGINNERS CAVE": PRINT : PRINT  SPC( 11)"BY DONALD BROWN": PRINT : PRINT : PRINT  SPC( 14); CHR$ (48 * (DA < 10));DA"-" MID$ (MX$,MO * 3 - 2,3)"-" CHR$ (48 * (YR < 10))YR
+ 50  PRINT : PRINT : PRINT  TAB( 6)"<1> ENTER MAIN HALL": PRINT  TAB( 6)"<2> EDIT CHARACTER FILE": PRINT  TAB( 6)"<3> CONTINUE PREVIOUS GAME"
+ 60  PRINT  TAB( 6)"<4> NOTES ON HDV IMAGE": PRINT  TAB( 6)"<5> EDIT AN ADVENTURE": PRINT  TAB( 6)"<6> LIST AN ADVENTURE": PRINT  TAB( 6)"<7> QUIT"
+ 70  PRINT : INPUT "  ENTER 1-7 ->";A$: ON A$ = "" GOTO 40:A =  ASC ( LEFT$ (A$,1)) - 48: ON A < 1 OR A > 7 OR  LEN (A$) > 1 GOTO 40: ON A GOTO 80,90,10000,5000,200,210,100
+ 80  PRINT D$"-FRONT.DESK"
+ 90  PRINT D$"-CHARACTER.EDIT"
+ 100  HOME : VTAB 10: PRINT " QUIT TO (B)ASIC OR (P)RODOS?": PRINT : INPUT "  -->";A$: ON A$ <  > "B" AND A$ <  > "P" GOTO 100: IF A$ = "B" THEN  TEXT : HOME : VTAB 24: NEW 
+ 110  PRINT D$"BYE"
+ 200  PRINT D$"-EDIT"
+ 210  PRINT D$"-LIST"
+ 500  REM 
+
+SET DATE
+
+ 510 MX$ = "JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC?????????":A =  PEEK (49040):B =  PEEK (49041):YR =  INT (B / 2):MO =  INT (A / 32) + 8 * (B - YR * 2):DA = A -  INT (A / 32) * 32
+ 520  IF YR < 99 AND MO < 13 AND MO > 0 AND DA < 32 AND DA > 0 THEN  RETURN 
+ 530  ON EN GOTO 700: VTAB 9: PRINT " ENTER THE DATE:"
+ 540  VTAB 11: HTAB 1: PRINT " DD-MMM-YY": PRINT : PRINT " <RETURN> WHEN FINISHED": PRINT " <LEFT ARROW> TO START OVER": VTAB 11: HTAB 2:HT = 2:X$ = ""
+ 550  HTAB HT: GET A$: ON A$ =  CHR$ (8) GOTO 540: IF A$ =  CHR$ (13) THEN 660
+ 560  ON (HT < 4 OR HT > 8) AND (A$ < "0" OR A$ > "9") GOTO 550: ON HT = 2 AND A$ > "3" GOTO 550: ON (HT = 12 OR HT = 15) AND A$ > "5" GOTO 550: ON (HT > 4 AND HT < 8) AND A$ < "A" OR A$ > "Z" GOTO 550: ON  LEN (X$) > 6 GOTO 550
+ 570  IF HT = 5 THEN MO$ = A$: FOR MO = 1 TO 12: IF MO$ <  >  MID$ (MX$,3 * MO - 2,1) THEN  NEXT : GOTO 550
+ 580  IF HT = 5 THEN  IF MO$ = "F" OR MO$ = "S" OR MO$ = "O" OR MO$ = "N" OR MO$ = "D" THEN X$ =  LEFT$ (X$,2) +  MID$ (MX$,3 * MO - 2,3): PRINT  MID$ (MX$,3 * MO - 2,3);:HT = HT + 3: GOTO 630
+ 590  IF HT = 6 THEN MO$ =  RIGHT$ (X$,1) + A$: FOR MO = 1 TO 12: IF MO$ <  >  MID$ (MX$,3 * MO - 2,2) THEN  NEXT : GOTO 550
+ 600  IF HT = 6 THEN  IF MO$ = "AP" OR MO$ = "AU" OR MO$ = "JA" THEN X$ =  LEFT$ (X$,2) +  MID$ (MX$,3 * MO - 2,3): PRINT  CHR$ (8); MID$ (MX$,3 * MO - 2,3);:HT = HT + 2: GOTO 630
+ 610  IF HT = 7 THEN MO$ =  RIGHT$ (X$,2) + A$: FOR MO = 1 TO 12: IF MO$ <  >  MID$ (MX$,3 * MO - 2,3) THEN  NEXT : GOTO 550
+ 620  PRINT A$;:X$ = X$ + A$
+ 630  ON  LEFT$ (X$,2) > "31" OR ( LEN (X$) = 2 AND X$ < "01") GOTO 540:HT = HT + 1 + (HT = 3) + (HT = 7) + (HT = 10) + (HT = 13)
+ 640  IF HT = 9 THEN N = 29 + (MO <  > 2):N$ =  STR$ (N): IF (MO = 2 OR MO = 4 OR MO = 6 OR MO = 9 OR MO = 11) AND  LEFT$ (X$,2) > N$ THEN X$ = N$ +  RIGHT$ (X$,3): HTAB 2: PRINT N$;
+ 650  GOTO 550
+ 660 DA =  VAL ( LEFT$ (X$,2)):MO$ =  MID$ (X$,3,3):YR =  VAL ( MID$ (X$,6,2))
+ 670  IF  LEN (X$) <  > 7 THEN 540
+ 680  IF YR > 99 OR MO > 12 OR MO < 1 OR DA > 31 OR DA < 1 THEN  PRINT  CHR$ (7);: GOTO 540
+ 690  POKE 49041,YR * 2 + (MO > 7): POKE 49040,32 * (MO -  INT (MO / 8) * 8) + DA:EN = 1: HOME : GOTO 500
+ 700  RETURN 
+ 5000  REM 
+NOTES
+
+ 5010  TEXT : HOME : PRINT D$"PR#3": HOME : PRINT  SPC( 16);: INVERSE : PRINT "  NOTES ON THE EAMON HARD DRIVE IMAGE  ";: NORMAL : PRINT : PRINT 
+ 5020  PRINT "My name is Frank Kunze and I have been working with Eamon for about 10 years    now (since I was 16).": PRINT 
+ 5030  PRINT "The adventures on this disk are all old adventures that I converted to a snazzy,all lowercase system about 9 years ago.  When the ApplePC emulator came out     I started to put this HDV image together.": PRINT 
+ 5040  PRINT "I've now finally gotten around to finishing this and thought that maybe I shouldrelease it to the general public.  So there you are.": PRINT 
+ 5050  PRINT "All but a few of these adventures have a MAIN PGM that I developed which has allof the Eamon version 7 features and more but runs as a version 6.  This was     based on an Eamon 8.0 system that I had developed.": PRINT 
+ 5060  PRINT "I have also included my UNIVERSAL dungeon editor and dungeon list programs.     VERY useful tools that were taken from my Eamon 8 DDD disk.  Eamon 8 never made it because it was finished when interest in Eamon and the Apple II was";
+ 5065  PRINT " nearly"
+ 5070  PRINT "dead.  Tom Zuchowski of the Eamon Adventurer's Guild felt that version 7 was    hard enough to get people to switch over to; and nobody was writing Eamons      anymore anyway.  He was very impressed, though...
+ 5080  PRINT : PRINT "HIT ANY KEY...";: POKE 49168,0: GET A$: PRINT : HOME : PRINT  SPC( 16);: INVERSE : PRINT "  NOTES ON THE EAMON HARD DRIVE IMAGE  ";: NORMAL : PRINT : PRINT 
+ 5090  PRINT "I've tested each of these adventures to make sure they run and return to the    Main Hall properly.  The last three adventures, Heart of Gold, Redemption, and"
+ 5100  PRINT "Edgar's Adventures are stand alone adventures and don't use your character or   return to the Main Hall.  Nevertheless, all three must have a FRESH.MEAT file   permanently in their subdirectory to work.": PRINT 
+ 5110  PRINT "The convienent arrow-key driven menu for selecting adventures was written just  for this hard drive image.  See lines 10000 and up of this program if you want  to copy it.": PRINT 
+ 5120  PRINT : PRINT "HIT ANY KEY...";: POKE 49168,0: GET A$: PRINT : HOME : PRINT  SPC( 16);: INVERSE : PRINT "  NOTES ON THE EAMON HARD DRIVE IMAGE  ";: NORMAL : PRINT : PRINT 
+ 5130  PRINT "I haven't worked on an Apple II in years (although I do use my emulator a lot), but I still hold many fond memories; it was my first computer.": PRINT 
+ 5140  PRINT "If you like this stuff and have a PC, check out my Eamon Deluxe gaming system.  It's even better.  Eamon Deluxe can be found on the Eamon CD or hopefully soon  from it's own Web Site.": PRINT 
+ 5150  PRINT "To get the latest copy of Eamon Deluxe, or just tell me what you think about    this hard drive image, my adventures, or anything else, email me:": PRINT 
+ 5160  PRINT  SPC( 20)"kunzefrank@hotmail.com": PRINT : PRINT 
+ 5170  PRINT  SPC( 29);: INVERSE : PRINT " +!+!+  Frank Kunze +!+!+ ";: NORMAL : PRINT : PRINT  SPC( 32);: INVERSE : PRINT " December 23, 2002 ";: NORMAL : PRINT 
+ 5180  PRINT : PRINT "HIT ANY KEY...";: POKE 49168,0: GET A$: PRINT : RUN 
+ 10000  REM 
+SELECT ADVENTURE
+
+ 10010  READ NA: DIM AN$(NA,2): FOR X = 1 TO NA: READ AN$(X,1),AN$(X,2): NEXT 
+ 10020 D$ =  CHR$ (4):O$ = D$ + "OPEN":R$ = D$ + "READ":C$ = D$ + "CLOSE"
+ 10030  TEXT : HOME : PRINT D$"PR#3": HOME : PRINT "Please select an adventure, or hit <ESC> to exit."
+ 10040  VTAB 4: FOR X = 1 TO 17: PRINT AN$(X,1);: HTAB 40: PRINT AN$(X + 17,1): NEXT :L = 4:H = 1:Z = 1
+ 10050  VTAB L: HTAB H: INVERSE : PRINT AN$(Z,1): NORMAL : POKE 49168,0
+ 10060 A =  PEEK (49152): ON A < 128 GOTO 10060:A = A - 128: VTAB L: HTAB H: PRINT AN$(Z,1)
+ 10070  IF A = 8 THEN H = H - 39:Z = Z - 17: ON H = 1 GOTO 10050:H = 40:Z = Z + 34: GOTO 10050
+ 10080  IF A = 11 THEN L = L - 1:Z = Z - 1: ON L > 3 GOTO 10050:L = 20:Z = Z + 17: GOTO 10050
+ 10090  IF A = 21 THEN H = H + 39:Z = Z + 17: ON H = 40 GOTO 10050:H = 1:Z = Z - 34: GOTO 10050
+ 10100  IF A = 10 THEN L = L + 1:Z = Z + 1: ON L < 21 GOTO 10050:L = 4:Z = Z - 17: GOTO 10050
+ 10110  IF A = 27 THEN  PRINT C$: RUN 
+ 10120  ON A <  > 13 GOTO 10050: HOME : PRINT  CHR$ (21): HOME 
+ 10130  POKE 49168,0: PRINT D$"PR#0": TEXT : HOME 
+ 10140  PRINT D$"PREFIX": INPUT P$: PRINT D$: PRINT D$"PREFIX" + P$ + AN$(Z,2)
+ 10150 F$ = "EAMON.NAME": POKE 216,0: PRINT O$F$: PRINT R$F$: INPUT AN$: PRINT C$: HOME : VTAB 5: PRINT "YOU ARE ABOUT TO ADVENTURE IN": PRINT : INVERSE : PRINT AN$: NORMAL : FOR X = 1 TO 7000: NEXT 
+ 10160  ONERR  GOTO 10190
+ 10170  PRINT D$"VERIFYFRESH.MEAT": POKE 216,0
+ 10180  PRINT D$"-EAMON." +  RIGHT$ (AN$(Z,2),3) + ".INTRO"
+ 10190  PRINT D$"PREFIX"P$
+ 10195  PRINT : PRINT  CHR$ (7)"THERE IS NO CHARACTER IN THAT ADVENTURE!": PRINT : PRINT "HIT ANY KEY...": GET A$: PRINT : RUN 
+ 10200  DATA 34,THE BEGINNER'S CAVE,E001,LAIR OF THE MINOTAUR,E002
+ 10210  DATA THE CAVE OF THE MIND,E003,THE ZYPHUR RIVERVENTURE,E004,CASTLE OF DOOM,E005,THE DEATH STAR,E006,THE DEVIL'S TOMB,E007
+ 10220  DATA THE ABDUCTOR'S QUARTERS,E008,ASSAULT ON THE CLONE MASTER,E009,THE MAGIC KINGDOM,E010,THE TOMB OF MOLINAR,E011
+ 10230  DATA THE BLACK DEATH,E020,PRIESTS OF XIM!,E043,THE SEWERS OF CHICAGO,E060,THE HARPY CLOUD,E061
+ 10240  DATA DHARMAQUEST,E074,TEMPLE OF THE GUILD,E075,THE PRINCE'S TAVERN,E078,CASTLE OF COUNT FUEY,E079,SEARCH FOR THE KEY/RESCUE MISSION,E080
+ 10250  DATA CAMP EAMON,E106,ASSAULT ON DOLNI KEEP,E124,JOURNEY TO JOTUNHEIM,E148,WALLED CITY OF DARKNESS,E150
+ 10260  DATA PATHETIC HIDEOUT OF MR. R.,E157,THE LAIR OF MR. ED,E158,ATTACK OF THE KRETONS,E194
+ 10270  DATA  EYE OF AGAMON,E217,ADVENTURE IN INTERZONE,E225,BOOKWORM 3-D,E226,FIENDS OF EAMON,E237,THE HEART OF GOLD,E997
+ 10280  DATA REDEMPTION,E998,EDGAR'S ADVENTURES,E999

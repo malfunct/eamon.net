@@ -1,0 +1,39 @@
+ 10  DIM R$(10),A$(10):Q$ =  CHR$ (34):D$ =  CHR$ (4)
+ 20 R$(1) = "What's green & red and goes in circles?":A$(1) = "A FROG IN A BLENDER"
+ 30  REM 
+
+
+ 40 R$(2) = "A horse is a horse of course, of course unless of course the horse is the famous ______?":A$(2) = "MR. ED"
+ 50  REM 
+
+
+ 60 R$(3) = "What has many ants but no uncles?":A$(3) = "AN ANTHILL"
+ 70  REM 
+
+
+ 80 R$(4) = "What's the author's name?":A$(4) = "NATHAN SEGERLIND"
+ 90  REM 
+
+
+ 100 R$(5) = "This contains a car, a fruit, and a snake.  What is it?":A$(5) = "A PENNY"
+ 110  REM 
+
+
+ 120 R$(6) = "What has 4 legs in the morning, two legs in the afternoon and 3 in the evening?":A$(6) = "MAN"
+ 130  REM 
+
+
+ 140 R$(7) = "A box with no key, hinges or lid, but inside a golden, edible treasure is hid.":A$(7) = "AN EGG"
+ 150  REM 
+
+
+ 160 R$(8) = "Say the magic word.":A$(8) = "THE MAGIC WORD"
+ 170  REM 
+
+
+ 180 R$(9) = "Two Legs sat on Three Legs, Three Legs sat at One Leg, No Legs sat on One Leg.  After Two Legs ate No Legs, Four Legs got the scraps.  Who is No Legs?":A$(9) = "A FISH"
+ 190  REM 
+
+
+ 200 R$(10) = "I am thinking of a person. He was my father's son, but I have no brothers. Who is he?":A$(10) = "ZOGAR"
+ 210  PRINT D$"OPENRIDDLES,L242": FOR A = 0 TO 9: PRINT D$"WRITERIDDLES,R"A: PRINT Q$;R$(A + 1): PRINT Q$;A$(A + 1): NEXT : PRINT D$"CLOSE"

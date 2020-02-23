@@ -1,0 +1,103 @@
+ 1  REM //ADVENTURE IN INTERZONE
+ 2  REM      INTRO PROGRAM
+ 3  REM 
+ 10  GOTO 100
+ 11  CALL 768,A,A$: GOTO 16
+ 14  IF  LEFT$ (A$,1) = " " THEN A$ =  MID$ (A$,2): GOTO 14
+ 16  IF  LEN (A$) <  = CP - 1 THEN  PRINT A$: GOSUB 52: RETURN 
+ 17  FOR K = CP - 1 TO 1 STEP  - 1: IF  MID$ (A$,K,1) = " " THEN  PRINT  LEFT$ (A$,K - 1):A$ =  RIGHT$ (A$, LEN (A$) - K): GOSUB 52: GOTO 14
+ 18  NEXT : STOP 
+ 25  GOSUB 51: GOSUB 11: RETURN 
+ 28 F1 =  PEEK (111):F2 =  PEEK (112): RETURN 
+ 29  IF ( PEEK (109) +  PEEK (110) * 256 + SL) < (F1 + F2 * 256) THEN  POKE 111,F1: POKE 112,F2
+ 30  RETURN 
+ 45  GOSUB 28: PRINT D$"READ"ED$",R"R: INPUT A$: PRINT D$:SL =  LEN (A$): GOSUB 51: GOSUB 11: GOSUB 29
+ 51  PRINT 
+ 52 L = L + 1: GOTO 58
+ 56  PRINT 
+ 57 L = L + 2
+ 58  IF L < 21 THEN  RETURN 
+ 59  POKE 49168,0: PRINT "[MORE] ";: GET Z$: PRINT : GOSUB 90: RETURN 
+ 60 L = 0: PRINT  CHR$ (12): HOME : RETURN 
+ 70  FOR A = 1 TO CP: PRINT "_";: NEXT : PRINT : GOSUB 56: RETURN 
+ 80  PRINT  SPC( CP / 2 -  LEN (B$) / 2)B$: GOSUB 52: RETURN 
+ 85  PRINT  SPC( CP / 2 - 11)B$: RETURN 
+ 90  GOSUB 60:B$ = "Adventure in Interzone": GOSUB 80:B$ = "By Frank Kunze": GOSUB 80:B$ = "Last revision: 9/26/94": GOSUB 80: GOSUB 70: RETURN 
+ 95  PRINT : INPUT "Continue (Y/N)?";A$:A$ =  LEFT$ (A$,1): IF A$ <  > "Y" THEN  POP : GOTO 1020
+ 96  RETURN 
+ 100  PRINT  CHR$ (26)"1": PRINT  CHR$ (21): TEXT : HOME : PRINT  CHR$ (4)"BLOADEAMON.UTILS": GOSUB 35000: GOSUB 34000
+ 110  IF ID THEN  CALL 768,P,
+ 120  GOSUB 90: PRINT :B$ = "Initializing...": GOSUB 80: GOTO 31000
+ 1000  REM 
+
+INTRO TEXT
+
+ 1010  GOSUB 90: FOR X = 1 TO 18:A$ = I$(X): GOSUB 25: NEXT 
+ 1020  GOSUB 59:B$ = "Make thy choice...": GOSUB 85: PRINT :B$ = "<1> Start the adventure": GOSUB 85:B$ = "<2> Review intro text": GOSUB 85:B$ = "<3> Read notes": GOSUB 85:B$ = "<4> Read tech notes": GOSUB 85
+ 1030 B$ = "<5> For your amusement...": GOSUB 85:B$ = "<6> ProDOS updates": GOSUB 85: PRINT : PRINT  SPC( CP / 2 - 8);: INPUT "-->";A$:A =  VAL (A$): IF A < 1 OR A > 6 THEN 1020
+ 1040  ON A GOTO 2000,1000,3000,4000,5000,6000
+ 2000  REM 
+
+START GAME
+
+ 2010  GOSUB 90: PRINT :B$ = "Loading...": GOSUB 80: PRINT D$"-MAIN.PGM"
+ 3000  REM 
+
+NOTES
+
+ 3010  GOSUB 90: FOR X = 1 TO 12:A$ = N$(X): GOSUB 25: NEXT : FOR X = 14 TO 18:A$ = N$(X): GOSUB 25: NEXT : GOTO 1020
+ 4000  REM 
+
+TECH NOTES
+
+ 4010  GOSUB 90:A$ = T$(1): GOSUB 11: GOSUB 95: GOSUB 90: FOR X = 2 TO 19:A$ = T$(X): GOSUB 25: NEXT : GOTO 1020
+ 5000  REM 
+
+AMUSEMENT
+
+ 5010  GOSUB 90:A$ = A$(1): GOSUB 11: GOSUB 95: GOSUB 90: FOR X = 2 TO 14:A$ = A$(X): GOSUB 25: NEXT : GOTO 1020
+ 6000  REM 
+
+UPDATES
+
+ 6010  GOSUB 90:A$ = "   A hint file has been stored on this disk in AppleWorks format.  I've also included a list of the Interzone database for anyone who's interested (Also in AWP format)."
+ 6015  GOSUB 11: GOSUB 51:A$ = "   The source code for the 'EAMON.UTILS' file is on the DOS 3.3 version."
+ 6020  GOSUB 11: PRINT : GOTO 1020
+ 31000  REM 
+
+INIT
+
+ 31010  ROT= ID: SCALE= CP: PRINT  CHR$ (4)"RESTOREPROG.VARS":ID =  PEEK (249):CP =  PEEK (231)
+ 31020  PRINT D$"OPENFRESH.MEAT": PRINT D$"READFRESH.MEAT": INPUT RE: INPUT M$(0),M%(0,1),M%(0,2),CH: FOR A = 0 TO 3: INPUT SA%(A): NEXT : FOR A = 1 TO 5: INPUT WA%(A): NEXT : INPUT AE,SE$,GO,BA,AC
+ 31030 NA = NZ: FOR A = NZ + 1 TO NZ + 4: INPUT A$(A),A%(A,6),A%(A,5),A%(A,7),A%(A,8)
+ 31040  IF A$(A) <  > "NONE" AND A$(A) <  > "" THEN NA = NA + 1:A%(A,2) = 2 + (A%(A,7) * A%(A,8) > 25):A%(A,4) =  - 1
+ 31050  NEXT : PRINT D$"CLOSE":M%(0,8) = NZ + 1:M%(0,9) = A%(NZ + 1,7):M%(0,10) = A%(NZ + 1,8)
+ 31060  FOR W2 = NZ + 1 TO NA
+ 31070  ROT= 1: FOR A = 1 TO NZ:A$ = A$(A): CALL 768,A,A$: IF A$ = A$(W2) THEN A$(A) = A$(A) + "#":A = 999: NEXT : GOTO 31070
+ 31080  NEXT : NEXT :M = AC / 2: IF M THEN NA = NA + 1:AR = NA: FOR A = 1 TO M: READ A$(NA): NEXT :A%(NA,2) = 11:A%(NA,4) =  - 999:A%(NA,5) = M * 2
+ 31090 SH = ( INT (AC / 2) <  > AC / 2): IF SH THEN NA = NA + 1:SH = NA:A$(NA) = "shield":A%(NA,2) = 11:A%(NA,4) =  - 999:A%(NA,5) = 1
+ 31100 M%(0,7) = M + (SH > 0):EA = 0: IF AE < AC * AC THEN EA = AE - AC * AC
+ 31110  ROT= ID: IF ID THEN  FOR A = 1 TO NZ: CALL 768,A,A$(A): NEXT : FOR A = 1 TO NM: CALL 768,A,M$(A): NEXT : FOR A = 0 TO 5: FOR M = 0 TO 2: CALL 768,A,BV$(A,M): NEXT : FOR A = 0 TO 3: CALL 768,A,SM$(A): NEXT 
+ 31120  PRINT D$"STOREFAST.START"
+ 31130  DATA leather armour,chain mail,plate mail
+ 33000  REM 
+
+LOAD INTRO TEXT
+
+ 33010  SCALE= CP: PRINT D$"RESTOREINTRO.TEXT":ID =  PEEK (249):CP =  PEEK (231): GOTO 1000
+ 34000  REM 
+
+MACHINE CHECK
+
+ 34010  IF  PEEK ( - 1101) = 6 THEN  RETURN 
+ 34020  HOME : PRINT "I SEE YOU HAVE A II+.  WELL, I NEED TO  KNOW IF YOUR II+ CAN DISPLAY LOWER-CASE TEXT.": PRINT 
+ 34030  PRINT "IF YOU CAN READ THIS: abcdcanyoureadme  THEN YOU DO.  CAN YOU READ IT (DOES IT  APPEAR AS LOWER-CASE TEXT)";
+ 34040  INPUT A$:A$ =  LEFT$ (A$,1): IF A$ <  > "Y" AND A$ <  > "N" THEN 34020
+ 34050  IF A$ = "N" THEN ID = 1
+ 34060  RETURN 
+ 35000  REM 
+
+80 COL. DISPLAY?
+
+ 35010 CP = 40: HOME : INPUT "80 COLUMN DISPLAY?";A$:A$ =  LEFT$ (A$,1): ON A$ <  > "Y" AND A$ <  > "N" GOTO 35000: IF A$ = "N" THEN  RETURN 
+ 35020  IF A$ = "Y" THEN  PRINT  CHR$ (4)"PR#3":CP = 80: POP : GOTO 120

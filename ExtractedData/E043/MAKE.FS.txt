@@ -1,0 +1,22 @@
+ 1  REM #43 PRIESTS OF XIM!
+
+ 10  REM 
+
+SET UP VAR. TABLE
+
+ 20 A = 0:M = A:K = 72:W = 92:C% = M:RO = 1:R% = A:CP = 40:D$ =  CHR$ (4):DF = M:OF = M:NZ = M:NA = M:NM = M:A$ = D$ + "OPENEAMON.":S$ = D$ + "READEAMON.":R2 = 1:R = M:S = M:D% = M:L = M:AC = M:WT = M:A% = M:M% = M
+ 30  REM 
+
+INIT
+
+ 50 CZ$ = D$ + "CLOSE": PRINT A$"DESC": PRINT S$"DESC": INPUT NR,NZ,A,NM: PRINT CZ$:K = 128:NA = NZ + 4: DIM A$(NA),A%(NA,8),M$(NM),M%(NM,14),SA%(3),S2%(3),SM$(2),BV$(5,2),WA%(5),W$(4),T(3),GD$(8)
+ 60  PRINT A$"ARTIFACTS,L"K: FOR A = 1 TO NZ: PRINT S$"ARTIFACTS,R"A: INPUT A$(A): FOR A2 = 1 TO 8: INPUT A%(A,A2): NEXT : IF A%(A,2) = M OR A%(A,2) = RO THEN L = L + 1
+ 70  NEXT : PRINT A$"MONSTERS,L"K: FOR M = 1 TO NM: PRINT S$"MONSTERS,R"M: INPUT M$(M): FOR A = 1 TO 12: INPUT M%(M,A): NEXT : NEXT : PRINT CZ$: READ NC: DIM C$(NC): FOR A = 1 TO NC: READ C$(A): NEXT 
+ 80 RO = 1:R2 = 1:ND = 6: FOR A = 0 TO 2: READ SM$(A): NEXT : FOR A = 0 TO 5: FOR A2 = 0 TO 2: READ BV$(A,A2): NEXT : NEXT : FOR A = 0 TO 4: READ W$(A): NEXT 
+ 90  FOR M = 1 TO 8: READ GD$(M): NEXT :L = L + 4: DIM V%((L > NR) * L + (NR > L) * NR):L = 0
+ 100 Q$ =  CHR$ (34):M%(0,9) =  - 1:M%(0,14) = 3:A$ = "":S$ = A$:CZ$ = A$:M% = NM:A% = NA: PRINT D$"STORE FAST.START"
+ 9000  DATA 27,North,South,East,West,Up,Down,Get,Drop,Look,Examine,Ready,Open,Attack,Flee,Give,Request,Inventory,Blast,Heal,Power,Speed,Smile,Say,Pray,Buy,Save,Resume
+ 9010  DATA growls at,ignores,smiles at
+ 9020  DATA lunge,tear,claw,swing,chop,swing,shoot,shoot,shoot,swing,swing,swing,stab,lunge,jab,swing,chop,stab
+ 9030  DATA axe,bow,club,spear,sword
+ 9040  DATA KROM,NIVEN,MELIX,INNOCENT,KLUNG,TAO,SHAREEN,RALF

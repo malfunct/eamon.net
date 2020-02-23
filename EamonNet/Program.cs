@@ -138,8 +138,6 @@ namespace EamonNet
 
             public Monster[] Monsters;
 
-            public string[] Effects;
-
             public int CurrentRoom;
 
             public int roomExited;
@@ -151,16 +149,12 @@ namespace EamonNet
         {
             public string Name;
 
-            public string LongDescription;
-
             public int[] Data;
         }
 
         class Monster
         {
             public string Name;
-
-            public string LongDescription;
 
             public int[] Data;
         }
@@ -664,27 +658,22 @@ namespace EamonNet
             this.ReadDataFiles();
             _currentAdventure.roomToEnter = 1;
 
-            bool stay = true;
-
-            do
-            {
-                this.GoToRoom();
-                this.DecrementPlayerSpeedCounter();
-                this.RegenerateSpellAbility();
-                bool roomIsLit = this.CheckLighting();
-                this.YouSee(roomIsLit);
-                this.CheckForMonsters();
-            } while (stay);
+            this.GoToRoom();
         }
 
         private void GoToRoom()
         {
             _currentAdventure.roomExited = _currentAdventure.CurrentRoom;
             _currentAdventure.CurrentRoom = _currentAdventure.roomToEnter;
+
+            YouSee();
         }
 
-        private void YouSee(bool roomIsLit)
+        private void YouSee()
         {
+            this.DecrementPlayerSpeedCounter();
+            this.RegenerateSpellAbility();
+            bool roomIsLit = this.CheckLighting();
             if (roomIsLit)
             {
                 this.DescribeRoom();
@@ -693,28 +682,12 @@ namespace EamonNet
             {
                 Console.WriteLine("IT'S TOO DARK TO SEE.");
             }
+            this.CheckForMonsters();
         }
 
         private void CheckForMonsters()
         {
-            Monster monsterInRoom = null;
-            for (int i = 0; i < this._currentAdventure.NumberOfMonsters; i++)
-            {
-                if (this._currentAdventure.Monsters[i].Data[5] == this._currentAdventure.CurrentRoom)
-                {
-                    monsterInRoom = this._currentAdventure.Monsters[i];
-                    break;
-                }
-            }
-
-            if (monsterInRoom != null)
-            {
-                if (monsterInRoom.Data[0] == 0)
-                {
-                    monsterInRoom.Data[0] = 1;
-                    Console.WriteLine();
-                }
-            }
+            
         }
 
         private void DescribeRoom()
@@ -794,7 +767,6 @@ namespace EamonNet
             this.ReadRooms();
             this.ReadEamonArtifacts();
             this.ReadEamonMonsters();
-            this.ReadEffects();
             this.InitPlayerMonster();
         }
 
@@ -802,7 +774,6 @@ namespace EamonNet
         {
             // add player monster
             Monster playerMonster = new Monster();
-            playerMonster.Data = new int[12];
             _currentAdventure.Monsters[0] = playerMonster;
             Character player = this.Player();
 
@@ -836,8 +807,6 @@ namespace EamonNet
             string[] armorNames = {"", "LEATHER", "CHAIN MAIL", "PLATE ARMOR"};
             armorArtifact.Name = armorNames[m];
 
-            armorArtifact.Data = new int[9];
-
             armorArtifact.Data[2] = 11;
             armorArtifact.Data[3] = m * 7;
             armorArtifact.Data[4] = -999;
@@ -851,8 +820,6 @@ namespace EamonNet
                 player.ShieldWorn = _currentAdventure.NumberOfArtifacts + _currentAdventure.numberOfPlayerWeapons + 1;
                 Artifact shield = new Artifact();
                 _currentAdventure.Artifacts[player.ShieldWorn] = shield;
-
-                shield.Data = new int[9];
 
                 shield.Name = "SHEILD";
                 shield.Data[2] = 11;
@@ -884,7 +851,7 @@ namespace EamonNet
             }
 
             // add players weapon ability
-            oddsToHit += player.WeaponAbility[newWeapon.Data[6] - 1];
+            oddsToHit += player.WeaponAbility[newWeapon.Data[6]];
 
             // add weapons complexity
             oddsToHit += newWeapon.Data[5];
@@ -895,72 +862,45 @@ namespace EamonNet
             playerMonster.Data[10] = oddsToHit;
         }
 
-        private void ReadEffects()
-        {
-            string path = Path.Combine(_currentAdventure.Path, "EAMON.DESC");
-            string[] records = new string[_currentAdventure.NumberOfEffects];
-            this.GetRecordsFromFile(path, RoomDescriptionRecordLength, _currentAdventure.NumberOfEffects, 201, records);
-
-            _currentAdventure.Effects = new string[_currentAdventure.NumberOfEffects];
-            for (int i = 0; i < _currentAdventure.NumberOfEffects; i++)
-            {
-                _currentAdventure.Effects[i] = this.TrimDescription(records[i]);
-            }
-        }
-
         private void ReadEamonMonsters()
         {
             string path = Path.Combine(_currentAdventure.Path, "EAMON.MONSTERS");
-            string path2 = Path.Combine(_currentAdventure.Path, "EAMON.DESC");
             string[] records = new string[_currentAdventure.NumberOfMonsters];
-            string[] descriptionRecords = new string[_currentAdventure.NumberOfMonsters];
-            //monster array is 1 indexed in old code so allow a garbage record in to the 0 slot, it will be skipped
             this.GetRecordsFromFile(path, MonsterRecordLength, _currentAdventure.NumberOfMonsters, 1, records);
-            this.GetRecordsFromFile(path2, RoomDescriptionRecordLength, _currentAdventure.NumberOfMonsters, 301, descriptionRecords);
 
             _currentAdventure.Monsters = new Monster[_currentAdventure.NumberOfMonsters + 1];
-            for (int i = 0; i < _currentAdventure.NumberOfMonsters; i++)
+            for (int i = 1; i <= _currentAdventure.NumberOfMonsters; i++)
             {
-                string[] tokens = records[i].Split('\n');
+                string[] tokens = records[i].Split('\r');
                 int currentToken = 0;
 
-                _currentAdventure.Monsters[i] = new Monster();
-                
                 _currentAdventure.Monsters[i].Name = tokens[currentToken++];
                 _currentAdventure.Monsters[i].Data = new int[12];
                 for (int j = 0; j < 12; j++)
                 {
                     _currentAdventure.Monsters[i].Data[j] = int.Parse(tokens[currentToken++]);
                 }
-
-                _currentAdventure.Monsters[i].LongDescription = this.TrimDescription(descriptionRecords[i]);
             }
         }
 
         private void ReadEamonArtifacts()
         {
             string path = Path.Combine(_currentAdventure.Path, "EAMON.ARTIFACTS");
-            string path2 = Path.Combine(_currentAdventure.Path, "EAMON.DESC");
             string[] records = new string[_currentAdventure.NumberOfArtifacts];
-            string[] descriptionRecords = new string[_currentAdventure.NumberOfArtifacts];
             this.GetRecordsFromFile(path, ArtifactRecordLength, _currentAdventure.NumberOfArtifacts, 1, records);
-            this.GetRecordsFromFile(path2, RoomDescriptionRecordLength, _currentAdventure.NumberOfArtifacts, 101, descriptionRecords);
 
-            _currentAdventure.Artifacts = new Artifact[_currentAdventure.NumberOfArtifacts + 6];
+            _currentAdventure.Artifacts = new Artifact[_currentAdventure.NumberOfArtifacts + 4];
             for (int i = 0; i < _currentAdventure.NumberOfArtifacts; i++)
             {
-                string[] tokens = records[i].Split('\n');
+                string[] tokens = records[i].Split('\r');
                 int currentToken = 0;
 
-                _currentAdventure.Artifacts[i] = new Artifact();
                 _currentAdventure.Artifacts[i].Name = tokens[currentToken++];
                 _currentAdventure.Artifacts[i].Data = new int[8];
                 for (int j = 0; j < 8; j++)
                 {
                     _currentAdventure.Artifacts[i].Data[j] = int.Parse(tokens[currentToken++]);
                 }
-
-                _currentAdventure.Artifacts[i].LongDescription = this.TrimDescription(descriptionRecords[i]);
             }
 
 
@@ -970,12 +910,10 @@ namespace EamonNet
             for (int i = 0; i < 4; i++)
             {
                 Character player = this.Player();
-                _currentAdventure.Artifacts[_currentAdventure.NumberOfArtifacts + i] = new Artifact();
-                
                 Artifact currentArtifact = _currentAdventure.Artifacts[_currentAdventure.NumberOfArtifacts + i];
 
                 currentArtifact.Name = player.WeaponName[i];
-                currentArtifact.Data = new int[9];
+                currentArtifact.Data = new int[8];
                 currentArtifact.Data[6] = player.WeaponType[i];
                 currentArtifact.Data[5] = player.WeaponOdds[i];
                 currentArtifact.Data[7] = player.WeaponDice[i];
@@ -1041,35 +979,26 @@ namespace EamonNet
 
             _currentAdventure.Rooms = new Room[_currentAdventure.NumberOfRooms];
             string[] roomDescriptions = new string[_currentAdventure.NumberOfRooms];
-
-            //because rooms are 1 indexed we are going to keep room 0 empty
-            //so we will re-read the first record (which has junk as far as this part is concerned)
-            //and record 0 will be skipped in the loop below
-            this.GetRecordsFromFile(path, RoomDescriptionRecordLength, _currentAdventure.NumberOfRooms, 0, roomDescriptions);
+            this.GetRecordsFromFile(path, RoomDescriptionRecordLength, _currentAdventure.NumberOfRooms, 1, roomDescriptions);
 
             for (int i = 1; i < _currentAdventure.NumberOfRooms; i++)
             {
-                _currentAdventure.Rooms[i] = new Room();
-                _currentAdventure.Rooms[i].Description = TrimDescription(roomDescriptions[i]);
+                int endIndex = roomDescriptions[i].IndexOf("\r", StringComparison.InvariantCulture);
+                _currentAdventure.Rooms[i].Description = roomDescriptions[i].Substring(0, endIndex);
 
                 // room not visited
-                _currentAdventure.Rooms[i].RoomVisted = false;
+                _currentAdventure.Rooms[i].roomVisted = false;
             }
 
             // read rooms data
             path = Path.Combine(_currentAdventure.Path, "EAMON.ROOMS");
 
             record = new string[_currentAdventure.NumberOfRooms];
-
-            //because rooms are 1 indexed we are going to keep room 0 empty
-            //so we will re-read the first record (which has junk as far as this part is concerned)
-            //and record 0 will be skipped in the loop below
-            this.GetRecordsFromFile(path, LR, _currentAdventure.NumberOfRooms, 0, record);
+            this.GetRecordsFromFile(path, LR, _currentAdventure.NumberOfRooms, 1, record);
             for (int i = 1; i < _currentAdventure.NumberOfRooms; i++)
             {
                 tokens = record[i].Split('\r');
                 currentToken = 0;
-                _currentAdventure.Rooms[i].Directions = new int[6];
                 for (int dir = 0; dir < 6; dir++)
                 {
                     _currentAdventure.Rooms[i].Directions[dir] = int.Parse(tokens[currentToken++]);
@@ -1081,11 +1010,7 @@ namespace EamonNet
             // read room names
             path = Path.Combine(_currentAdventure.Path, "EAMON.ROOM.NAME");
             record = new string[_currentAdventure.NumberOfRooms];
-
-            //because rooms are 1 indexed we are going to keep room 0 empty
-            //so we will re-read the first record (which has junk as far as this part is concerned)
-            //and record 0 will be skipped in the loop below
-            this.GetRecordsFromFile(path, LN, _currentAdventure.NumberOfRooms, 0, record);
+            this.GetRecordsFromFile(path, LN, _currentAdventure.NumberOfRooms, 1, record);
             for (int i = 1; i < _currentAdventure.NumberOfRooms; i++)
             {
                 int endIndex = record[i].IndexOf("\r", StringComparison.InvariantCulture);
@@ -1976,7 +1901,6 @@ namespace EamonNet
             character.Charisma = int.Parse(characterTokens[currentToken++]);
 
             character.SpellAbility = new int[4];
-            character.CurrentSpellAbility = new int[4];
             for (int x = 0; x < 4; x++)
             {
                 character.SpellAbility[x] = int.Parse(characterTokens[currentToken++]);
@@ -2136,7 +2060,7 @@ namespace EamonNet
                 }
 
                 Console.WriteLine(stringToPrint.Substring(index, lineLength));
-                index += lineLength;
+                index =+ lineLength;
             }
         }
 
@@ -2149,13 +2073,6 @@ namespace EamonNet
         {
             builder.Append(token);
             builder.Append("\r");
-        }
-        
-        private string TrimDescription(string description)
-        {
-            int endIndex = description.IndexOf("\r", StringComparison.InvariantCulture);
-            string trimmedDescription = description.Substring(0, endIndex);
-            return trimmedDescription;
         }
     }
 }

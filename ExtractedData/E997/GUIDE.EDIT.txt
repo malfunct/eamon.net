@@ -1,0 +1,119 @@
+ 1  GOTO 31000: REM 
+
+EAMON ADVENTURE #000
+THE HEART OF GOLD
+BY FRANK KUNZE
+
+EAMON ADVENTURER'S GUILD
+7625 HAWKHAVEN DR.
+CLEMMONS, NC 27012
+
+ 2  REM GUIDE EDITOR
+ 3  REM REV. 13 MAY 95
+
+ 10  REM 
+
+MENU
+
+ 20  TEXT : HOME : PRINT "Heart of Gold  -- Guide Editor V1": PRINT "Another fine product of Frank Kunze."
+ 30  PRINT : PRINT "Number of entries: ";NE: PRINT 
+ 40  PRINT "1.  Add an entry.": PRINT : PRINT "2.  Edit an entry.": PRINT : PRINT "3.  List entries.": PRINT : PRINT "4.  List entry names.": PRINT 
+ 45  PRINT "5.  Quit.": PRINT 
+ 50  PRINT : PRINT "Enter your choice. (1-5)  [_]"; CHR$ (8); CHR$ (8);
+ 60  GET A$:A =  VAL (A$): IF A < 1 OR A > 5 THEN 10
+ 70  HOME : ON A GOTO 100,200,300,400,500
+ 100  REM 
+
+ADD
+
+ 110 I2$ = "":NE = NE + 1:E = NE: PRINT "Enter name of entry:":TL = 32: GOSUB 600:EN$ = I$:P = 1:R = NR + 1
+ 120  PRINT "Enter text.": PRINT : PRINT "Paragraph #"P: PRINT 
+ 130 I2$ = "":TL = 238: GOSUB 600:P$(P) = I$
+ 140  INPUT "Another paragrah? (Y/N):";A$:A$ =  LEFT$ (A$,1): IF A$ <  > "Y" AND A$ <  > "y" THEN 190
+ 150  HOME :P = P + 1: GOTO 120
+ 190 NR = NR + P: GOTO 800
+ 200  REM 
+
+EDIT
+
+ 210  PRINT "Edit which entry?": GOSUB 900: GOSUB 700: HOME :I2$ = EN$: PRINT "Enter name of entry:":TL = 32: GOSUB 600:EN$ = I$:A = 1
+ 220  PRINT "Enter text.  Limit "P" paragraph(s)": PRINT : PRINT "Paragraph #"A: PRINT 
+ 230 I2$ = P$(A):TL = 238: GOSUB 600:P$(A) = I$: IF A = P THEN 800
+ 250  HOME :A = A + 1: GOTO 220
+ 290  GOTO 800
+ 300  REM 
+
+LIST
+
+ 310  PRINT "Starting with?": PRINT : GOSUB 900:SE = E: PRINT : PRINT "Ending with?": PRINT : GOSUB 900:EE = E: IF EE < SE THEN 10
+ 320  FOR E = SE TO EE: GOSUB 700: HOME : PRINT "Entry #"E: PRINT EN$":": PRINT 
+ 330  FOR A = 1 TO P: PRINT P$(A): PRINT : NEXT : PRINT "HIT ANY KEY...";: GET A$: PRINT : NEXT : GOTO 10
+ 400  REM 
+
+LIST NAMES
+
+ 410  PRINT "Starting with?": PRINT : GOSUB 900:SE = E: PRINT : PRINT "Ending with?": PRINT : GOSUB 900:EE = E: IF EE < SE THEN 10
+ 415  INPUT "Send output to printer? (Y/N):";A$:A$ =  LEFT$ (A$,1):PS = 0: IF A$ = "Y" OR A$ = "y" THEN PS = 3: PRINT D$"PR#"PS
+ 420 L = 2:PP = 1: PRINT "The Heart of Gold  -- Guide entry list.": PRINT : FOR E = SE TO EE: GOSUB 700: PRINT "#"E": ";EN$:L = L + 1
+ 430  IF  NOT PS THEN  IF L = 20 THEN  PRINT "HIT ANY KEY...";: GET A$: PRINT :L = 0: HOME 
+ 440  IF PS THEN  IF L = 45 THEN  PRINT : PRINT  SPC( 32)"Page "PP: PRINT  CHR$ (12):PP = PP + 1:L = 0
+ 450  NEXT : IF PS THEN  IF L < 44 THEN  PRINT : PRINT  SPC( 32)"Page "PP: PRINT  CHR$ (12): PRINT D$"PR#0"
+ 460  PRINT "HIT ANY KEY...";: GET A$: PRINT : GOTO 10
+ 500  REM 
+
+QUIT
+
+ 510  PRINT W$",R0": PRINT NE: PRINT W$".TEXT,R0": PRINT NR
+ 520  PRINT D$"CLOSE": END 
+ 600  REM 
+
+INPUT I$
+
+ 605  IF  NOT TL THEN TL = 238
+ 610  CALL  - 958: IF TL > 5 THEN  HTAB 1:V =  PEEK (37) + 1: FOR X = 1 TO TL: PRINT U$;: NEXT : PRINT : VTAB V
+ 615 I$ = ""
+ 620  PRINT I2$;: IF TL > 5 THEN  PRINT U$;: PRINT  CHR$ (8);
+ 625  IF  LEN (I2$) THEN  FOR X = 1 TO  LEN (I2$): PRINT  CHR$ (8);: NEXT 
+ 630  GET A$: IF A$ =  CHR$ (4) THEN I2$ =  MID$ (I2$,2): GOTO 620
+ 635 X =  LEN (I$) +  LEN (I2$) = TL:SL =  LEN (I2$): IF A$ >  CHR$ (31) THEN  ON X GOTO 685: PRINT A$;:I$ = I$ + A$:I2$ =  MID$ (I2$,2): GOTO 630
+ 640  IF A$ =  CHR$ (9) THEN  ON X GOTO 685:I2$ = " " + I2$: GOTO 620
+ 645  IF A$ =  CHR$ (5) THEN  PRINT I2$;:I$ = I$ + I2$:I2$ = "": GOTO 630
+ 650  IF A$ =  CHR$ (2) AND  LEN (I$) THEN  FOR A = 1 TO  LEN (I$): PRINT  CHR$ (8);: NEXT :I2$ = I$ + I2$:I$ = "": GOTO 630
+ 655  IF A$ =  CHR$ (21) THEN  ON  NOT SL GOTO 685:A$ =  LEFT$ (I2$,1): GOTO 635
+ 660  IF A$ =  CHR$ (8) AND  LEN (I$) > 1 THEN I2$ =  RIGHT$ (I$,1) + I2$:I$ =  LEFT$ (I$, LEN (I$) - 1): PRINT A$;: GOTO 630
+ 665  IF A$ =  CHR$ (8) AND  LEN (I$) THEN I2$ = I$ + I2$: PRINT A$;: GOTO 615
+ 670  IF A$ =  CHR$ (8) THEN 615
+ 675  IF A$ =  CHR$ (27) THEN I$ = I$ + I2$: PRINT : ON TL < 10 GOTO 72: VTAB V: CALL  - 958: VTAB V: PRINT I$: PRINT : RETURN 
+ 680  IF A$ =  CHR$ (13) THEN  ON I$ = "" GOTO 685: CALL  - 958: PRINT : ON TL < 10 GOTO 72: PRINT : RETURN 
+ 685  PRINT  CHR$ (7);: GOTO 630
+ 700  REM 
+
+READ DATA
+
+ 710  PRINT R$",R"E: INPUT EN$,R,P:A = 1: FOR X = R TO R + P - 1: PRINT R$".TEXT,R"X: INPUT P$(A):A = A + 1: NEXT 
+ 720  PRINT D$: RETURN 
+ 800  REM 
+
+WRITE DATA
+
+ 805  PRINT W$",R"E: PRINT Q$;EN$;Q$: PRINT R: PRINT P: PRINT D$:A = 1
+ 810  PRINT W$".TEXT,R"R: PRINT Q$;P$(A);Q$: PRINT D$
+ 820 A = A + 1: ON A > P GOTO 10:R = R + 1: GOTO 810
+ 900  REM 
+
+PICK NUMBER
+
+ 910  PRINT "Enter number of entry (1-"NE"):";: INPUT "";A$:E =  INT ( VAL (A$)): ON E < 1 OR E > NE GOTO 900: RETURN 
+ 31000  REM 
+
+INIT
+
+ 31010  TEXT : HOME : IF  PEEK (64435) <  > 6 THEN  PRINT "THIS PROGRAM WILL ONLY RUN ON AN APPLE  II WITH LOWER-CASE TEXT CAPABILITIES.": PRINT : STOP 
+ 31020 D$ =  CHR$ (4):GD$ = "GUIDE":O$ = D$ + "OPEN" + GD$:W$ = D$ + "WRITE" + GD$:R$ = D$ + "READ" + GD$
+ 31030  PRINT O$".TEXT,L242": PRINT O$",L40": PRINT R$",R0": INPUT NE: PRINT R$".TEXT,R0": INPUT NR: PRINT D$
+ 31040 U$ = "_":Q$ =  CHR$ (34): GOTO 10
+ 32000  REM 
+
+INIT GUIDE
+
+ 32010 D$ =  CHR$ (4): PRINT D$"OPEN GUIDE,L40": PRINT D$"OPEN GUIDE.TEXT,L242": PRINT D$"WRITE GUIDE,R0": PRINT 0: PRINT D$"WRITE GUIDE.TEXT,R0": PRINT 0: PRINT D$"CLOSE"

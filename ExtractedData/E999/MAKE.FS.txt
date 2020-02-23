@@ -1,0 +1,18 @@
+ 31000  REM 
+
+INIT
+
+ 31010  POKE 216,0:D$ =  CHR$ (4):A = 0:M = A:A2 = M:K = M:A$ = D$ + "OPENEAMON.":S$ = D$ + "READEAMON.": PRINT A$"DESC": PRINT S$"DESC": INPUT NR,NA,A,NM: PRINT D$"CLOSE"
+ 31020  DIM A$(NA),A%(NA,8),M$(NM),M%(NM,13),SM$(3),BV$(6,2),RB$(6,1),WA%(5),R$(NR),R%(NR,5),C$(33),I%(14),SP$(2),S%(2)
+ 31030  PRINT A$"ARTIFACTS,L72": FOR A = 1 TO NA: PRINT S$"ARTIFACTS,R"A: INPUT A$(A): FOR A2 = 1 TO 8: INPUT A%(A,A2): NEXT : NEXT 
+ 31040  PRINT A$"MONSTERS,L92": FOR M = 1 TO NM: PRINT S$"MONSTERS,R"M: INPUT M$(M): FOR A2 = 1 TO 11: INPUT M%(M,A2): NEXT :M%(M,12) = M%(M,3): NEXT 
+ 31050  PRINT A$"ROOMS,L72": FOR A = 1 TO NR: PRINT S$"ROOMS,R"A: INPUT R$(A): FOR M = 1 TO 5: INPUT R%(A,M): NEXT : NEXT : PRINT D$"CLOSE"
+ 31060  FOR A = 1 TO 33: READ C$(A): NEXT :R2 = 22:RO = R2: FOR A = 0 TO 6: FOR A2 = 0 TO 2: READ BV$(A,A2): NEXT : NEXT : FOR A = 0 TO 6: FOR A2 = 0 TO 1: READ RB$(A,A2): NEXT : NEXT : FOR A = 0 TO 3: READ SM$(A): NEXT 
+ 31080 A%(2,7) = 1:A%(2,8) = 4:A%(3,6) = 4:M$(0) = "Edgar":M%(0,1) = 25:M%(0,2) = 22:M%(0,7) = 1:M%(0,8) =  - 1:M%(7,13) =  - 999:CH = 22:AE = 30:GO = 0:WC = 40: FOR A = 1 TO 5:WA%(A) = 35: NEXT 
+ 31100 Q$ =  CHR$ (34): FOR M = 16 TO 18:M%(M,0) = 1: NEXT : FOR A = 0 TO 14: READ I%(A): NEXT : FOR A = 0 TO 2: READ SP$(A),S%(A): NEXT :A%(45,6) = 6: PRINT : PRINT D$"STORE FAST.START": END 
+ 31920  DATA n,s,e,w,u,d,board,flee,close,drink,drop,eat,equip,examine,get,open,put,read,remove,use,wear,attack,buy,free,give,request,sell,talk,inventory,look,quit,resume,save
+ 31940  DATA lunges,tears,claws,swings,chops,swings,fires,shoots,fires,swings,swings,swings,stabs,lunges,jabs,swings,chops,stabs,shoots,aims,shoots
+ 31950  DATA Missed,Missed,Parried,Missed,Missed,Missed,Parried,Missed,Parried,Missed,Parried,Missed,Dodged,Missed
+ 31955  DATA looks,growls,looks,smiles
+ 31960  DATA 12,13,15,16,17,18,19,22,24,27,30,31,32,35,36
+ 31970  DATA "magic missle",5,fireball,10,"thunder bolt",15

@@ -1,0 +1,16 @@
+ 10  REM #7 THE DEVIL'S TOMB
+
+ 31000  REM 
+
+INIT
+
+ 31010 D$ =  CHR$ (4):A$ = D$ + "OPENEAMON.":S$ = D$ + "READEAMON.":CZ$ = D$ + "CLOSE":A = 0:M = 2:RO = 3:NA = 0:NM = 0
+ 31020  PRINT A$"DESC": PRINT S$"DESC": INPUT NR,NZ,A,NM: PRINT CZ$:K = 128:NA = NZ + 4: DIM A$(NA),A%(NA,8),M$(NM),M%(NM,14),SA%(3),S2%(3),SM$(2),BV$(5,2),WA%(5),W$(5)
+ 31030  PRINT A$"ARTIFACTS,L"K: FOR A = 1 TO NZ: PRINT S$"ARTIFACTS,R"A: INPUT A$(A): FOR A2 = 1 TO 8: INPUT A%(A,A2): NEXT : IF A%(A,2) = M OR A%(A,2) = RO THEN L = L + 1
+ 31040  NEXT : PRINT A$"MONSTERS,L"K: FOR M = 1 TO NM: PRINT S$"MONSTERS,R"M: INPUT M$(M): FOR A = 1 TO 12: INPUT M%(M,A): NEXT : NEXT : PRINT CZ$: READ NC: DIM C$(NC): FOR A = 1 TO NC: READ C$(A): NEXT 
+ 31050 RO = 1:R2 = 1:W2 = 0:ND = 6: FOR A = 0 TO 2: READ SM$(A): NEXT : FOR A = 0 TO 5: FOR A2 = 0 TO 2: READ BV$(A,A2): NEXT : NEXT : FOR A = 1 TO 5: READ W$(A): NEXT 
+ 31060 Q$ =  CHR$ (34):G$ =  CHR$ (7):A$ = "":S$ = "":CZ$ = "":M% = NM:A% = NA:L = L + 4: DIM V%((L > NR) * L + (NR > L) * NR):L = 0: PRINT D$"STOREFAST.START"
+ 31900  DATA 27,north,south,east,west,up,down,get,drop,look,examine,read,ready,open,attack,flee,give,request,inventory,blast,heal,power,speed,smile,say,bet,save,resume
+ 31910  DATA growl,look,smile
+ 31920  DATA lunge,tear,claw,swing,chop,swing,shoot,shoot,shoot,swing,swing,swing,stab,lunge,jab,swing,chop,stab
+ 31930  DATA axe,bow,club,spear,sword
