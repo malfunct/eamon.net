@@ -145,6 +145,20 @@ namespace EamonNet
             public int roomExited;
 
             public int roomToEnter;
+
+            public bool enemyPresent;
+
+            public bool exitAdventure;
+
+            public int friendlyHardiness;
+
+            public int enemyHardiness;
+
+            public int friendlyDamageTaken;
+
+            public int enemyDamageTaken;
+
+            public bool invokeAttack;
         }
 
         class Artifact
@@ -162,7 +176,11 @@ namespace EamonNet
 
             public string LongDescription;
 
+            public bool seen = false;
+
             public int[] Data;
+
+            public int index;
         }
 
         class Room
@@ -214,6 +232,9 @@ namespace EamonNet
         };
 
         private Random _r;
+
+        private string[] directions = { "NORTH", "SOUTH", "EAST", "WEST", "UP", "DOWN" };
+        private string[] commands = { "GET", "DROP", "LOOK", "EXAMINE", "ATTACK", "FLEE", "GIVE", "INVENTORY", "BLAST", "HEAL", "POWER", "SPEED", "SMILE", "SAY", "READ", "READY", "SAVE", "LIGHT", "OPEN", "PUT", "DRINK", "FREE", "REQUEST", "WEAR", "REMOVE", "USE" };
 
         static void Main()
         {
@@ -664,23 +685,627 @@ namespace EamonNet
             this.ReadDataFiles();
             _currentAdventure.roomToEnter = 1;
 
-            bool stay = true;
-
             do
             {
-                this.GoToRoom();
-                this.DecrementPlayerSpeedCounter();
-                this.RegenerateSpellAbility();
-                bool roomIsLit = this.CheckLighting();
-                this.YouSee(roomIsLit);
-                this.CheckForMonsters();
-            } while (stay);
+                ProcessEnterRoom();
+                ProcessCommand();
+            } while (!this._currentAdventure.exitAdventure);
+
+            //do exit adventure checks
+        }
+
+        private void ProcessCommand()
+        {
+            Console.WriteLine("YOUR COMMAND? ");
+            string answer;
+            do
+            {
+                answer = Input().Trim();
+            } while (string.IsNullOrWhiteSpace(answer));
+
+            int firstSpace = answer.IndexOf(' ');
+
+            string verb = "";
+            string obj = "";
+
+            if(firstSpace < 0)
+            {
+                verb = answer.ToUpper();
+            }
+            else
+            {
+                verb = answer.Substring(0, firstSpace).Trim().ToUpper();
+                obj = answer.Substring(firstSpace).Trim().ToUpper();
+            }
+
+            if(this.directions.Contains(verb))
+            {
+                this.MovePlayer(verb);
+            }
+            else if(this.commands.Contains(verb))
+            {
+                switch(verb)
+                {
+                    case "GET":
+                    case "PICK":
+                        GetItem(obj);
+                        break;
+                    case "DROP":
+                        DropItem(obj);
+                        break;
+                    case "ATTACK":
+                        
+                }
+
+                CheckForMonsterAttack();
+            }
+            else
+            {
+                Console.WriteLine("I ONLY UNDERSTAND THESE COMMANDS--");
+                for(int i = 0; i<this.directions.Length; i++)
+                {
+                    Console.WriteLine($"  {this.directions[i]}");
+                }
+                for(int i=0; i<this.commands.Length; i++)
+                {
+                    Console.WriteLine($"  {this.commands[i]}");
+                }
+            }
+        }
+
+        private void CheckForMonsterAttack()
+        {
+            if(!_currentAdventure.enemyPresent || !_currentAdventure.invokeAttack)
+            {
+                return;
+            }
+
+            for(int i=1; i<_currentAdventure.NumberOfMonsters; i++)
+            {
+                Monster currentMonster = _currentAdventure.Monsters[i];
+
+                if(currentMonster.Data[5] == _currentAdventure.CurrentRoom)
+                {
+                    bool friendly = currentMonster.Data[14] == 1;
+
+                    float monsterRating;
+
+                    if(friendly)
+                    {
+                        monsterRating = ((float)_currentAdventure.friendlyDamageTaken / (float)_currentAdventure.friendlyHardiness) - ((float)_currentAdventure.enemyDamageTaken / (float)_currentAdventure.enemyDamageTaken) / 5 + _r.Next(41) - 20;
+
+                        if (currentMonster.Data[4] < monsterRating)
+                        {
+                            //flee
+                            Console.WriteLine($"\r\n{ currentMonster.Name} FLEES OUT AN EXIT.\r\n");
+                            int room = PickRandomExit(CurrentRoom());
+
+                            currentMonster.Data[5] = room;
+                            _currentAdventure.friendlyHardiness -= currentMonster.Data[1];
+                            _currentAdventure.friendlyHardiness -= currentMonster.Data[13];
+                        }
+                        else
+                        {
+                            //enemy monsters attack
+                            for(int j = 1; j < _currentAdventure.NumberOfMonsters; j++)
+                            {
+                                Monster possibleEnemy = _currentAdventure.Monsters[j];
+                                if(possibleEnemy.Data[5] == _currentAdventure.CurrentRoom && possibleEnemy.Data[14] == 0)
+                                {
+                                    this.attack(currentMonster, possibleEnemy);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        monsterRating = ((float)_currentAdventure.enemyDamageTaken / (float)_currentAdventure.enemyHardiness) - ((float)_currentAdventure.friendlyDamageTaken / (float)_currentAdventure.friendlyDamageTaken) / 5 + _r.Next(41) - 20;
+
+                        if (currentMonster.Data[4] < monsterRating)
+                        {
+                            Console.WriteLine($"\r\n{ currentMonster.Name} FLEES OUT AN EXIT.\r\n");
+                            int room = PickRandomExit(CurrentRoom());
+
+                            currentMonster.Data[5] = room;
+                            _currentAdventure.enemyHardiness -= currentMonster.Data[1];
+                            _currentAdventure.enemyHardiness -= currentMonster.Data[13];
+                        }
+                        else
+                        {
+                            if (_currentAdventure.friendlyHardiness == _currentAdventure.Monsters[0].Data[1])
+                            {
+                                this.attack(currentMonster, _currentAdventure.Monsters[0]);
+                            }
+                            else
+                            {
+                                for (int j = 1; j < _currentAdventure.NumberOfMonsters; j++)
+                                {
+                                    Monster possibleEnemy = _currentAdventure.Monsters[j];
+                                    if (possibleEnemy.Data[5] == _currentAdventure.CurrentRoom && possibleEnemy.Data[14] == 1 && _r.Next(4) < 1)
+                                    {
+                                        this.attack(currentMonster, possibleEnemy);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (_currentAdventure.enemyDamageTaken < _currentAdventure.enemyHardiness)
+                {
+                    _currentAdventure.enemyPresent = false;
+                    break;
+                }
+            }
+        }
+
+        private void attack(Monster attacker, Monster defender)
+        {
+            if(attacker.Data[9] == -1)
+            {
+                return;
+            }
+
+            int damage;
+            float skill;
+            int a;
+
+            Console.WriteLine($"{attacker.Name} ATTACKS {defender.Name}");
+            int roll = _r.Next(1, 101);
+            if(roll < 5 || roll < attacker.Data[10])
+            {
+                // hit
+                if(_r.Next(1, 101) > attacker.Data[10])
+                {
+                    attacker.Data[10] += 2;
+                }
+                damage = attacker.Data[11];
+                skill = attacker.Data[12];
+                a = 1;
+
+                if(roll > 5)
+                {
+                    Console.WriteLine(" -- A HIT!");
+                }
+                else
+                {
+                    Console.WriteLine(" -- A CRITICAL HIT!");
+                    int criticalRoll = _r.Next(1, 101);
+
+                    if(criticalRoll < 51)
+                    {
+                        a = 0;
+                    }
+                    else if( criticalRoll < 86)
+                    {
+                        skill *= (float)1.5;
+                    }
+                    else if( criticalRoll < 96)
+                    {
+                        damage *= 2;
+                    }
+                    else if ( criticalRoll < 100)
+                    {
+                        damage *= 3;
+                    }
+                    else
+                    {
+                        this.KillMonster(defender, 0);
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                // miss
+                if (roll < 97)
+                {
+                    Console.WriteLine(" -- A MISS.");
+                    return;
+                }
+                // fumble
+                Console.WriteLine(" -- A FUMBLE!");
+                int fumbleRoll = _r.Next(1, 101);
+                if (fumbleRoll < (35 + 40 * (attacker.Data[9] == 0 ? 1 : 0)))
+                {
+                    Console.WriteLine(" -- FUMBLE RECOVERED.");
+                    return;
+                }
+
+                if (fumbleRoll < 76)
+                {
+                    Console.WriteLine(" -- WEAPON DROPPED!");
+                    _currentAdventure.Artifacts[attacker.Data[9]].Data[4] = _currentAdventure.CurrentRoom;
+                    attacker.Data[9] = -1;
+                    return;
+                }
+
+                if (fumbleRoll < 95)
+                {
+                    Console.WriteLine(" -- WEAPON BROKEN!");
+                    _currentAdventure.Artifacts[attacker.Data[9]].Data[4] = 0;
+                    attacker.Data[9] = -1;
+
+                    if (_r.Next(11) > 9)
+                    {
+                        return;
+                    }
+
+                    Console.WriteLine(" -- BROKEN WEAPON HURTS USER!");
+                }
+
+                if(fumbleRoll != 100)
+                {
+                    damage = attacker.Data[11];
+                    skill = attacker.Data[12];
+                    a = 1;
+                    defender = attacker;
+                }
+                else
+                {
+                    damage = attacker.Data[11] * 2;
+                    skill = attacker.Data[12];
+                    a = 0;
+                    defender = attacker;
+                }
+            }
+
+            int d2 = 0;
+
+            for(int i = 0; i < damage; i++)
+            {
+                d2 += (int)(skill * _r.NextDouble() + 1);
+            }
+
+            d2 -= a * defender.Data[8];
+
+            if(d2 < 1)
+            {
+                Console.WriteLine("  BLOW BOUNCES OFF ARMOR\r\n");
+                return;
+            }
+
+            defender.Data[13] += d2;
+            if(defender.Data[13] > defender.Data[1])
+            {
+                this.KillMonster(defender, d2);
+                return;
+            }
+
+            if(defender.Data[14] == 0) //enemy monster
+            {
+                _currentAdventure.enemyDamageTaken += d2;
+            }
+            else
+            {
+                _currentAdventure.friendlyDamageTaken += d2;
+            }
+
+            switch(defender.Data[13] * 5 / defender.Data[1] + 1)
+            {
+                case 1:
+                    Console.WriteLine($"\r\n{defender.Name} TAKES DAMAGE BUT");
+                    Console.WriteLine("  IS STILL IN GOOD SHAPE.");
+                    break;
+                case 2:
+                    Console.WriteLine($"\r\n{defender.Name} IS HURTING.");
+                    break;
+                case 3:
+                    Console.WriteLine($"\r\n{defender.Name} IS IN PAIN.");
+                    break;
+                case 4:
+                    Console.WriteLine($"\r\n{defender.Name} IS VERY BADLY INJURED.");
+                    break;
+                case 5:
+                    Console.WriteLine($"\r\n{defender.Name} IS AT DEATH'S DOOR,");
+                    Console.WriteLine("   KNOCKING LOUDLY.");
+                    break;
+            }
+        }
+
+        private void KillMonster(Monster defender, int damage)
+        {
+            Console.WriteLine($"{defender.Name} IS DEAD!");
+            if(defender.Data[14] == 0) //enemy
+            {
+                _currentAdventure.enemyDamageTaken = _currentAdventure.enemyDamageTaken + defender.Data[1] - defender.Data[13] + damage;
+            }
+            else
+            {
+                _currentAdventure.friendlyDamageTaken = _currentAdventure.friendlyDamageTaken + defender.Data[1] - defender.Data[13] + damage;
+            }
+
+            defender.Data[5] = 0;
+            _currentAdventure.Artifacts[_currentAdventure.NumberOfArtifacts - 1 - _currentAdventure.NumberOfMonsters + defender.index].Data[4] = _currentAdventure.CurrentRoom;
+            if(defender.Data[9] > 0)
+            {
+                _currentAdventure.Artifacts[defender.Data[9]].Data[4] = _currentAdventure.CurrentRoom;
+            }
+
+            if(_currentAdventure.enemyDamageTaken >= _currentAdventure.enemyHardiness)
+            {
+                _currentAdventure.enemyPresent = false;
+            }
+
+            if(defender.index == 0)
+            {
+                // player death (GOTO 23010)
+            }
+
+            if (defender.Name == "PIRATE")
+            {
+                // print pirate special message
+                _currentAdventure.Artifacts[10].Data[8] = 6;
+                CurrentRoom().RoomVisted = false;
+            }
+
+            if(defender.Name == "MIMIC")
+            {
+                Console.WriteLine("\r\nAS THE MIMIC DIES, IT ROLLS OVER AND");
+                Console.WriteLine("YOU FIND A RING UNDERNEATH IT.");
+                _currentAdventure.Artifacts[6].Data[4] = _currentAdventure.CurrentRoom;
+            }
+        }
+
+        private int PickRandomExit(Room room)
+        {
+            int exit = -1;
+            int count = 0;
+            int index = 0;
+            int max = _r.Next(1,room.Directions.Length);
+            while (count < max)
+            {
+                if (room.Directions[index] > 0) //valid room
+                {
+                    exit = room.Directions[index];
+                    count++;
+                }
+
+                index++;
+                index = index % room.Directions.Length;
+            }
+
+            return exit;
+        }
+
+        private void GetItem(string obj)
+        {
+            if(obj == "TORCH")
+            {
+                Console.WriteLine("\r\nALL TORCHES ARE BOLTED TO THE WALL AND");
+                Console.WriteLine("AND CANNOT BE REMOVED.\r\n");
+                return;
+            }
+
+            if(obj == "ALL")
+            {
+                for(int i = 1; i < _currentAdventure.NumberOfArtifacts; i++)
+                {
+                    Artifact currentArtifact = _currentAdventure.Artifacts[i];
+
+                    if(currentArtifact.Data[4] == _currentAdventure.CurrentRoom)
+                    {
+                        if((_characters[_theCharacter].CarriedWeight + currentArtifact.Data[3]) < (10 * _currentAdventure.Monsters[0].Data[1]))
+                        {
+                            Console.WriteLine($"{currentArtifact.Name} TAKEN.");
+                            currentArtifact.Data[4] = -1;
+                            _characters[_theCharacter].CarriedWeight += currentArtifact.Data[3];
+                        }
+                    }
+                }
+
+                _currentAdventure.invokeAttack = true;
+                return;
+            }
+
+            if(obj == "RAT")
+            {
+                for(int i = 14; i < 17; i++)
+                {
+                    Artifact currentArtifact = _currentAdventure.Artifacts[i];
+                    if(currentArtifact.Data[4] == _currentAdventure.CurrentRoom)
+                    {
+                        obj = currentArtifact.Name.ToUpper();
+                    }
+                }
+            }
+            
+            if(obj == "COINS" || obj == "GOLD")
+            {
+                obj = _currentAdventure.Artifacts[5].Name;
+            }
+
+            for(int i = 1; i < _currentAdventure.NumberOfArtifacts; i++)
+            {
+                Artifact currentArtifact = _currentAdventure.Artifacts[i];
+
+                if (obj == currentArtifact.Name && currentArtifact.Data[4] == _currentAdventure.CurrentRoom)
+                {
+                    if ((_characters[_theCharacter].CarriedWeight + currentArtifact.Data[3]) < (10 * _currentAdventure.Monsters[0].Data[1]))
+                    {
+                        Console.WriteLine("\r\nGOT IT.");
+                        currentArtifact.Data[4] = -1;
+                        _characters[_theCharacter].CarriedWeight += currentArtifact.Data[3];
+
+                        if (currentArtifact.Data[2] < 2 || _currentAdventure.Monsters[0].Data[9] != -1)
+                        {
+                            _currentAdventure.invokeAttack = true;
+                        }
+                        return;
+                    }
+
+                    Console.WriteLine("\r\nIT IS TOO HEAVY FOR YOU.\r\n");
+                    return;
+                }
+            }
+
+            Console.WriteLine($"\r\nI SEE NO {obj} HERE!\r\n");
+        }
+
+        private void DropItem(string obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void MovePlayer(string verb)
+        {
+            if(this._currentAdventure.enemyPresent)
+            {
+                Console.WriteLine("YOU CAN'T TURN YOUR BACK HERE!");
+                return;
+            }
+
+            int dirNumber = 0;
+            for(int i=0;i<this.directions.Length;i++)
+            {
+                if(verb.Equals(this.directions[i]))
+                {
+                    dirNumber = i;
+                    break;
+                }
+            }
+
+            int roomToCheck = this._currentAdventure.Rooms[this._currentAdventure.CurrentRoom].Directions[dirNumber];
+
+            if(roomToCheck > 500) // deal with door
+            {
+                Artifact door = this._currentAdventure.Artifacts[roomToCheck - 500];
+
+                if(door.Data[8] > 0) //door hidden
+                {
+                    Console.WriteLine("\r\nYOU CAN'T GO THAT WAY!");
+                    CurrentRoom().RoomVisted = false;
+                    return;
+                }
+
+                if(door.Data[6] != 0) //door locked
+                {
+                    Console.WriteLine($"\r\nTHE {door.Name} BLOCKS THE WAY!");
+                    return;
+                }
+                else
+                {
+                    roomToCheck = door.Data[5];
+                }
+            }
+
+            if(roomToCheck == -99) //return to main hall
+            {
+                this._currentAdventure.exitAdventure = true;
+                return;
+            }
+
+            if(roomToCheck <= 0 || roomToCheck >= this._currentAdventure.NumberOfRooms)
+            {
+                Console.WriteLine("\r\nYOU CAN'T GO THAT WAY!");
+                CurrentRoom().RoomVisted = false;
+                return;
+            }
+
+            this._currentAdventure.roomToEnter = roomToCheck;
+        }
+
+        private void ProcessEnterRoom()
+        {
+            this.GoToRoom();
+            this.DecrementPlayerSpeedCounter();
+            this.RegenerateSpellAbility();
+            bool roomIsLit = this.CheckLighting();
+            this.YouSee(roomIsLit);
+            this.DisplayMonstersInRoom();
+            this.DisplayArtifactsInRoom();
+            CurrentRoom().RoomVisted = true;
+        }
+
+        private void DisplayArtifactsInRoom()
+        {
+            for(int i=0; i < this._currentAdventure.NumberOfArtifacts; i++)
+            {
+                if(this._currentAdventure.Artifacts[i].Data[4] == this._currentAdventure.CurrentRoom)
+                {
+                    Artifact artifactInRoom = this._currentAdventure.Artifacts[i];
+
+                    if(CurrentRoom().RoomVisted)
+                    {
+                        Console.WriteLine($" - YOU SEE {artifactInRoom.Name}.");
+                    }
+                    else
+                    {
+                        PrintAsLines(artifactInRoom.LongDescription);
+                    }
+                }
+            }
+
+            for (int i = this._currentAdventure.NumberOfArtifacts; i < _currentAdventure.NumberOfArtifacts + _currentAdventure.numberOfPlayerWeapons; i++)
+            {
+                if(this._currentAdventure.Artifacts[i].Data[4] == this._currentAdventure.CurrentRoom)
+                {
+                    Console.WriteLine($"YOUR {this._currentAdventure.Artifacts[i].Name} IS HERE.");
+                }
+            }
         }
 
         private void GoToRoom()
         {
             _currentAdventure.roomExited = _currentAdventure.CurrentRoom;
             _currentAdventure.CurrentRoom = _currentAdventure.roomToEnter;
+
+            if(_currentAdventure.roomExited != 0)
+            {
+                _currentAdventure.enemyHardiness = 0;
+                _currentAdventure.friendlyHardiness = _currentAdventure.Monsters[0].Data[1];
+
+                _currentAdventure.enemyDamageTaken = 0;
+                _currentAdventure.friendlyDamageTaken = _currentAdventure.Monsters[0].Data[13];
+
+                for (int i = 1; i < _currentAdventure.Monsters.Length; i++)
+                {
+                    Monster currentMonster = _currentAdventure.Monsters[i];
+
+                    if(currentMonster.Data[5] == _currentAdventure.roomExited)
+                    {
+                        if(currentMonster.Data[14] != 0 || _r.Next(200) < currentMonster.Data[4])
+                        {
+                            currentMonster.Data[5] = _currentAdventure.CurrentRoom;
+                        }
+                    }
+                    else if(currentMonster.Data[5] == _currentAdventure.CurrentRoom)
+                    {
+                        int FR = currentMonster.Data[3];
+                        if(FR != 0 && FR != 100)
+                        {
+                            FR += (_characters[_theCharacter].Charisma - 10) / 2;
+                        }
+
+                        if (FR > 100 && _r.Next(10000) != 0)
+                        {
+                            currentMonster.Data[14] = 1;
+                        }
+                        else
+                        {
+                            currentMonster.Data[14] = 0;
+                        }
+                    }
+
+                    if(currentMonster.Data[14] == 1) // friendly
+                    {
+                        _currentAdventure.friendlyDamageTaken += currentMonster.Data[13];
+                        _currentAdventure.friendlyHardiness += currentMonster.Data[1];
+                    }
+                    else
+                    {
+                        _currentAdventure.enemyDamageTaken += currentMonster.Data[13];
+                        _currentAdventure.enemyHardiness += currentMonster.Data[1];
+                    }
+                }
+
+                if(_currentAdventure.enemyHardiness > 0)
+                {
+                    _currentAdventure.enemyPresent = true;
+                }
+            }
         }
 
         private void YouSee(bool roomIsLit)
@@ -695,37 +1320,38 @@ namespace EamonNet
             }
         }
 
-        private void CheckForMonsters()
+        private void DisplayMonstersInRoom()
         {
-            Monster monsterInRoom = null;
             for (int i = 0; i < this._currentAdventure.NumberOfMonsters; i++)
             {
                 if (this._currentAdventure.Monsters[i].Data[5] == this._currentAdventure.CurrentRoom)
                 {
-                    monsterInRoom = this._currentAdventure.Monsters[i];
-                    break;
-                }
-            }
+                    Monster monsterInRoom = this._currentAdventure.Monsters[i];
 
-            if (monsterInRoom != null)
-            {
-                if (monsterInRoom.Data[0] == 0)
-                {
-                    monsterInRoom.Data[0] = 1;
-                    Console.WriteLine();
+                    if (this._currentAdventure.Monsters[i].Data[15] == 0)
+                    {
+                        this._currentAdventure.Monsters[i].Data[15] = 1;
+                        PrintAsLines(this._currentAdventure.Monsters[i].LongDescription);
+                    }
+                    else
+                    {
+                        Console.WriteLine($" - YOU SEE {monsterInRoom.Name} IS HERE.");
+                    }
                 }
             }
         }
 
         private void DescribeRoom()
         {
-            Console.WriteLine($"YOU ARE {this.CurrentRoom().Name}");
-
             if (!CurrentRoom().RoomVisted)
             {
                 this.PrintAsLines(CurrentRoom().Description);
-                CurrentRoom().RoomVisted = true;
             }
+            else
+            {
+                Console.WriteLine($"YOU ARE STANDING IN {this.CurrentRoom().Name}");
+            }
+
         }
 
         private bool CheckLighting()
@@ -802,6 +1428,7 @@ namespace EamonNet
         {
             // add player monster
             Monster playerMonster = new Monster();
+            playerMonster.index = 0;
             playerMonster.Data = new int[12];
             _currentAdventure.Monsters[0] = playerMonster;
             Character player = this.Player();
@@ -925,10 +1552,11 @@ namespace EamonNet
                 int currentToken = 0;
 
                 _currentAdventure.Monsters[i] = new Monster();
+                _currentAdventure.Monsters[i].index = i;
                 
                 _currentAdventure.Monsters[i].Name = tokens[currentToken++];
-                _currentAdventure.Monsters[i].Data = new int[12];
-                for (int j = 0; j < 12; j++)
+                _currentAdventure.Monsters[i].Data = new int[17];
+                for (int j = 1; j <= 12; j++)
                 {
                     _currentAdventure.Monsters[i].Data[j] = int.Parse(tokens[currentToken++]);
                 }

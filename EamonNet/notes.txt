@@ -1,0 +1,38 @@
+﻿enter room:
+exited room = current room
+current room = next room
+
+hardiness 0 (enemy) = 0
+hardiness 1 = monster 0 data 1
+damage 0 (enemy) = 0
+damage 1 = monster 0 data 13
+
+loop through monsters
+    if monster in previous room
+		if monster data 14 != 0 or random(0 to 199) < monster data 4
+			then move monster to current room
+	else
+		if monster not in room 
+			skip
+		else
+			FR (friend?) = monster data 13
+			if FR > 0 and FR != 100
+				FR = FR + (CH - 10) / 2
+            monster data 14 = FR > 100 * RND(1)	(monster is friendly value, non zero is friendly)
+			if monster data 14 == 0 then enemy present = true
+    
+	 friendOrFoe = monster data 14
+	 damage (friendOrFoe) += monster data 13
+	 hardiness (friendOrFoe) += monster data 1
+
+after loop set enemy present to hardiness 0 > 0
+	
+
+
+
+commands:
+GET,  PICK, DROP, ATTACK, LOOK, EXAMINE, UP,   U,    DOWN, D,    NORTH, N,    EAST, E,    WEST, W,    SOUTH
+1000, 1000, 2000, 3000,   4000, 4000,    5000, 5000, 5000, 5000, 5000,  5000, 5000, 5000, 5000, 5000, 5000
+
+S,    POWER, HEAL, BLAST, SPEED, SMILE, WAVE,  SAY,   DRINK, READ,  READY, ESCAPE, RETREAT, FLEE,  INVENTORY, I,     ENTER, TROLLSFIRE, OPEN
+5000, 6000,  7000, 8000,  10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000,  17000,   17000, 18000,     18000, 19000, 20000,      21000

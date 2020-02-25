@@ -73,12 +73,14 @@
     <Content Include="Adventures.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="BASIC Files\BGCave.txt" />
     <Content Include="BASIC Files\CHAR.EXT.txt" />
     <Content Include="BASIC Files\FRONT.DESK.txt" />
     <Content Include="BASIC Files\MAIN.HALL.txt" />
     <Content Include="BASIC Files\MAIN.PGM.txt" />
     <Content Include="BASIC Files\MAKE.FILES.txt" />
     <Content Include="BASIC Files\NEW.CHARACTERS.txt" />
+    <Content Include="notes.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
