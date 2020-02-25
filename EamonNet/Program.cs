@@ -866,6 +866,8 @@ namespace EamonNet
         {
             string path = Path.Combine(_currentAdventure.Path, "EAMON.MONSTERS");
             string[] records = new string[_currentAdventure.NumberOfMonsters];
+            string[] descriptionRecords = new string[_currentAdventure.NumberOfMonsters];
+
             this.GetRecordsFromFile(path, MonsterRecordLength, _currentAdventure.NumberOfMonsters, 1, records);
 
             _currentAdventure.Monsters = new Monster[_currentAdventure.NumberOfMonsters + 1];
