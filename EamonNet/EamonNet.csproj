@@ -50,25 +50,30 @@
     <None Include="CHARACTERS">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="E001\EAMON.ARTIFACTS" />
-    <None Include="E001\EAMON.DESC">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="E001\EAMON.ARTIFACTS">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="E001\EAMON.MONSTERS" />
+    <None Include="E001\EAMON.DESC">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="E001\EAMON.MONSTERS">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="E001\EAMON.NAME">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="E001\EAMON.ROOM.NAME">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="E001\EAMON.ROOMS">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Adventures.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="BASIC Files\19Main.txt" />
     <Content Include="BASIC Files\BGCave.txt" />
     <Content Include="BASIC Files\CHAR.EXT.txt" />
     <Content Include="BASIC Files\FRONT.DESK.txt" />
@@ -76,6 +81,7 @@
     <Content Include="BASIC Files\MAIN.PGM.txt" />
     <Content Include="BASIC Files\MAKE.FILES.txt" />
     <Content Include="BASIC Files\NEW.CHARACTERS.txt" />
+    <Content Include="BASIC Files\OMainHall.txt" />
     <Content Include="notes.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
