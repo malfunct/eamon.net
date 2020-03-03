@@ -132,6 +132,8 @@ namespace EamonNet
 
             public Artifact[] Artifacts;
 
+            public Effect[] Effects;
+
             public int numberOfPlayerWeapons;
 
             public int numberOfPlayerArmor;
@@ -157,8 +159,15 @@ namespace EamonNet
             public int enemyDamageTaken;
 
             public bool invokeAttack;
+
+            public bool trollsfire;
         }
 
+        class Effect
+        {
+            public string LongDescription;
+        }
+        
         class Artifact
         {
             public string Name;
@@ -734,6 +743,10 @@ namespace EamonNet
                     case "ATTACK":
                         AttackMonster(obj);
                         break;
+                    case "LOOK":
+                    case "EXAMINE":
+                        LookAt(obj);
+                        break;
                 }
 
                 CheckForMonsterAttack();
@@ -752,23 +765,97 @@ namespace EamonNet
             }
         }
 
-        private void AttackMonster(string obj)
+        private void LookAt(string obj)
         {
-            if(string.IsNullOrEmpty(obj))
+            if (this._currentAdventure.enemyPresent)
             {
-                Console.Write("WHAT? "); string answer;
-                do
-                {
-                    answer = Input().Trim();
-                } while (string.IsNullOrWhiteSpace(answer));
-                obj = answer;
+                Console.WriteLine("YOU CAN'T DO THAT WITH UNFRIENDLIES");
+                Console.WriteLine("ABOUT!\r\n");
+                return;
             }
 
-            if(obj == "RAT")
+            if (obj.ToLower() == "label" || obj.ToLower() == "bottle")
             {
-                for(int i=1; i<4; i++)
+                if (_currentAdventure.Artifacts[2].Data[4] == _currentAdventure.CurrentRoom
+                    || _currentAdventure.Artifacts[2].Data[4] == -1
+                    || _currentAdventure.Artifacts[12].Data[4] == _currentAdventure.CurrentRoom
+                    || _currentAdventure.Artifacts[12].Data[4] == -1)
                 {
-                    if(_currentAdventure.Monsters[i].Data[5] == _currentAdventure.CurrentRoom)
+                    Console.WriteLine("THE BOTTLE SAYS, 'HEALING POTION'");
+                }
+            }
+
+            bool LK = false;
+            for(int i=0; i<_currentAdventure.NumberOfArtifacts; i++)
+            {
+                Artifact currentArtifact = _currentAdventure.Artifacts[i];
+                if(currentArtifact.Name.ToLower() == obj.ToLower())
+                {
+                    if(currentArtifact.Data[4] == _currentAdventure.CurrentRoom || currentArtifact.Data[4] == -1)
+                    {
+                        PrintAsLines(currentArtifact.LongDescription);
+                        LK = true;
+                    }
+                }
+            }
+
+            if(!LK)
+            {
+                PrintAsLines(this.CurrentRoom().Description);
+                if(_currentAdventure.CurrentRoom == 15)
+                {
+                    Console.WriteLine("YOU FOUND A HIDDEN TUNNEL GOING OFF TO");
+                    Console.WriteLine("THE EAST!");
+                }
+            }
+        }
+
+        private void TrollsFire()
+        {
+            if (_currentAdventure.Artifacts[10].Data[4] != -1)
+            {
+                Console.WriteLine("NOTHING HAPPENS.");
+            }
+            else
+            {
+                if(_currentAdventure.trollsfire)
+                {
+                    PrintAsLines(_currentAdventure.Effects[5].LongDescription);
+                    _currentAdventure.trollsfire = false;
+                    _currentAdventure.Artifacts[10].Data[8] = 6;
+                    if(_currentAdventure.Monsters[0].Data[9] == 10)
+                    {
+                        _currentAdventure.Monsters[0].Data[12] = 6;
+                    }
+                }
+                else
+                {
+                    PrintAsLines(_currentAdventure.Effects[3].LongDescription);
+                    if(_currentAdventure.Monsters[0].Data[9] != 10)
+                    {
+                        PrintAsLines(_currentAdventure.Effects[4].LongDescription);
+                        this.DamageDefender(_currentAdventure.Monsters[0], 1, 5, 0);
+                    }
+                    else
+                    {
+                        //20510 TR = 1:MD%(0,12) = 10:AD%(10,8) = 10: GOTO 300
+                        _currentAdventure.trollsfire = true;
+                        _currentAdventure.Monsters[0].Data[12] = 10;
+                        _currentAdventure.Artifacts[10].Data[8] = 10;
+                    }
+                }
+            }
+        }
+
+        private void AttackMonster(string obj)
+        {
+            obj = GetObjectInput(obj);
+
+            if (obj == "RAT")
+            {
+                for (int i = 1; i < 4; i++)
+                {
+                    if (_currentAdventure.Monsters[i].Data[5] == _currentAdventure.CurrentRoom)
                     {
                         obj = _currentAdventure.Monsters[i].Name;
                     }
@@ -776,17 +863,17 @@ namespace EamonNet
             }
 
             int monsterToAttack = 0;
-            for(int i = 1; i <= _currentAdventure.NumberOfMonsters; i++)
+            for (int i = 1; i <= _currentAdventure.NumberOfMonsters; i++)
             {
-                if(_currentAdventure.Monsters[i].Name == obj && _currentAdventure.Monsters[i].Data[5] == _currentAdventure.CurrentRoom)
+                if (_currentAdventure.Monsters[i].Name == obj && _currentAdventure.Monsters[i].Data[5] == _currentAdventure.CurrentRoom)
                 {
                     monsterToAttack = i;
                 }
             }
 
-            if(monsterToAttack != 0)
+            if (monsterToAttack != 0)
             {
-                if(this._currentAdventure.Monsters[0].Data[9] == -1)
+                if (this._currentAdventure.Monsters[0].Data[9] == -1)
                 {
                     Console.WriteLine("YOU HAVE NO WEAPON READY!");
                 }
@@ -799,6 +886,21 @@ namespace EamonNet
             {
                 Console.WriteLine("ATTACK WHO?");
             }
+        }
+
+        private static string GetObjectInput(string obj)
+        {
+            if (string.IsNullOrWhiteSpace(obj))
+            {
+                Console.Write("WHAT? "); string answer;
+                do
+                {
+                    answer = Input().Trim();
+                } while (string.IsNullOrWhiteSpace(answer));
+                obj = answer;
+            }
+
+            return obj;
         }
 
         private void CheckForMonsterAttack()
@@ -891,7 +993,7 @@ namespace EamonNet
 
         private void attack(Monster attacker, Monster defender)
         {
-            if(attacker.Data[9] == -1)
+            if (attacker.Data[9] == -1)
             {
                 return;
             }
@@ -902,10 +1004,10 @@ namespace EamonNet
 
             Console.WriteLine($"{attacker.Name} ATTACKS {defender.Name}");
             int roll = _r.Next(1, 101);
-            if(roll < 5 || roll < attacker.Data[10])
+            if (roll < 5 || roll < attacker.Data[10])
             {
                 // hit
-                if(_r.Next(1, 101) > attacker.Data[10])
+                if (_r.Next(1, 101) > attacker.Data[10])
                 {
                     attacker.Data[10] += 2;
                 }
@@ -913,7 +1015,7 @@ namespace EamonNet
                 skill = attacker.Data[12];
                 a = 1;
 
-                if(roll > 5)
+                if (roll > 5)
                 {
                     Console.WriteLine(" -- A HIT!");
                 }
@@ -922,19 +1024,19 @@ namespace EamonNet
                     Console.WriteLine(" -- A CRITICAL HIT!");
                     int criticalRoll = _r.Next(1, 101);
 
-                    if(criticalRoll < 51)
+                    if (criticalRoll < 51)
                     {
                         a = 0;
                     }
-                    else if( criticalRoll < 86)
+                    else if (criticalRoll < 86)
                     {
                         skill *= (float)1.5;
                     }
-                    else if( criticalRoll < 96)
+                    else if (criticalRoll < 96)
                     {
                         damage *= 2;
                     }
-                    else if ( criticalRoll < 100)
+                    else if (criticalRoll < 100)
                     {
                         damage *= 3;
                     }
@@ -984,7 +1086,7 @@ namespace EamonNet
                     Console.WriteLine(" -- BROKEN WEAPON HURTS USER!");
                 }
 
-                if(fumbleRoll != 100)
+                if (fumbleRoll != 100)
                 {
                     damage = attacker.Data[11];
                     skill = attacker.Data[12];
@@ -1000,29 +1102,34 @@ namespace EamonNet
                 }
             }
 
+            DamageDefender(defender, damage, skill, a);
+        }
+
+        private void DamageDefender(Monster defender, int damage, float skill, int a)
+        {
             int d2 = 0;
 
-            for(int i = 0; i < damage; i++)
+            for (int i = 0; i < damage; i++)
             {
                 d2 += (int)(skill * _r.NextDouble() + 1);
             }
 
             d2 -= a * defender.Data[8];
 
-            if(d2 < 1)
+            if (d2 < 1)
             {
                 Console.WriteLine("  BLOW BOUNCES OFF ARMOR\r\n");
                 return;
             }
 
             defender.Data[13] += d2;
-            if(defender.Data[13] > defender.Data[1])
+            if (defender.Data[13] > defender.Data[1])
             {
                 this.KillMonster(defender, d2);
                 return;
             }
 
-            if(defender.Data[14] == 0) //enemy monster
+            if (defender.Data[14] == 0) //enemy monster
             {
                 _currentAdventure.enemyDamageTaken += d2;
             }
@@ -1031,7 +1138,7 @@ namespace EamonNet
                 _currentAdventure.friendlyDamageTaken += d2;
             }
 
-            switch(defender.Data[13] * 5 / defender.Data[1] + 1)
+            switch (defender.Data[13] * 5 / defender.Data[1] + 1)
             {
                 case 1:
                     Console.WriteLine($"\r\n{defender.Name} TAKES DAMAGE BUT");
@@ -1120,6 +1227,8 @@ namespace EamonNet
 
         private void GetItem(string obj)
         {
+            obj = GetObjectInput(obj);
+
             if(obj == "TORCH")
             {
                 Console.WriteLine("\r\nALL TORCHES ARE BOLTED TO THE WALL AND");
@@ -1194,7 +1303,44 @@ namespace EamonNet
 
         private void DropItem(string obj)
         {
-            throw new NotImplementedException();
+            obj = GetObjectInput(obj);
+
+            if(this._currentAdventure.enemyPresent)
+            {
+                Console.WriteLine("YOU CAN'T DO THAT WITH UNFRIENDLIES");
+                Console.WriteLine("ABOUT!\r\n");
+                return;
+            }
+
+            if(obj.ToLower() == "all")
+            {
+                for(int i=0; i<this._currentAdventure.NumberOfArtifacts; i++)
+                {
+                    Artifact currentArtifact = this._currentAdventure.Artifacts[i];
+                    if (currentArtifact.Data[4] == -1)
+                    {
+                        Player().CarriedWeight -= currentArtifact.Data[3];
+                        currentArtifact.Data[4] = _currentAdventure.CurrentRoom;
+                        Console.WriteLine($"{currentArtifact.Name} DROPPED.");
+                    }
+                }
+
+                return;
+            }
+
+            for(int i=0; i<_currentAdventure.NumberOfArtifacts; i++)
+            {
+                Artifact currentArtifact = this._currentAdventure.Artifacts[i];
+                if(currentArtifact.Name.ToLower() == obj.ToLower() && currentArtifact.Data[4] == -1)
+                {
+                    Player().CarriedWeight -= currentArtifact.Data[3];
+                    currentArtifact.Data[4] = _currentAdventure.CurrentRoom;
+                    Console.WriteLine( $"{currentArtifact.Name} DROPPED.");
+                    return;
+                }
+            }
+
+            Console.WriteLine($"YOU AREN'T CARRYING A {obj}.");
         }
 
         private void MovePlayer(string verb)
@@ -1395,6 +1541,8 @@ namespace EamonNet
 
         private void DescribeRoom()
         {
+            //DEBUG
+            Console.WriteLine($"ROOM#: {_currentAdventure.CurrentRoom}");
             if (!CurrentRoom().RoomVisted)
             {
                 this.PrintAsLines(CurrentRoom().Description);
@@ -1471,6 +1619,7 @@ namespace EamonNet
         {
             this.ReadEamonName();
             this.ReadRooms();
+            this.ReadEffects();
             this.ReadEamonArtifacts();
             this.ReadEamonMonsters();
             this.InitPlayerMonster();
@@ -1627,8 +1776,8 @@ namespace EamonNet
                 int currentToken = 0;
                 _currentAdventure.Artifacts[i] = new Artifact();
                 _currentAdventure.Artifacts[i].Name = tokens[currentToken++];
-                _currentAdventure.Artifacts[i].Data = new int[8];
-                for (int j = 0; j < 8; j++)
+                _currentAdventure.Artifacts[i].Data = new int[9];
+                for (int j = 1; j < 9; j++)
                 {
                     _currentAdventure.Artifacts[i].Data[j] = int.Parse(tokens[currentToken++]);
                 }
@@ -1691,6 +1840,22 @@ namespace EamonNet
                     }
                 }
             } while (renameHappened);
+        }
+
+        private void ReadEffects()
+        {
+            string path = Path.Combine(_currentAdventure.Path, "EAMON.DESC");
+            string[] record = new string[_currentAdventure.NumberOfEffects];
+            this.GetRecordsFromFile(path, RoomDescriptionRecordLength, _currentAdventure.NumberOfEffects, 201, record);
+
+            _currentAdventure.Effects = new Effect[_currentAdventure.NumberOfEffects];
+
+            for(int i=0;i<_currentAdventure.NumberOfEffects;i++)
+            {
+                Effect newEffect = new Effect();
+                _currentAdventure.Effects[i] = newEffect;
+                newEffect.LongDescription = ParseDescription(record[i]);
+            }
         }
 
         private void ReadRooms()
