@@ -747,6 +747,30 @@ namespace EamonNet
                     case "EXAMINE":
                         LookAt(obj);
                         break;
+                    case "POWER":
+                        PowerSpell(obj);
+                        break;
+                    case "HEAL":
+                        HealSpell(obj);
+                        break;
+                    case "BLAST":
+                        BlastSpell(obj);
+                        break;
+                    case "SPEED":
+                        SpeedSpell(obj);
+                        break;
+                    case "SMILE":
+                        Smile(obj);
+                        break;
+                    case "WAVE":
+                        Wave(obj);
+                        break;
+                    case "SAY":
+                        Say(obj);
+                        break;
+                    case "DRINK":
+                        Drink(obj);
+                        break;
                 }
 
                 CheckForMonsterAttack();
@@ -765,12 +789,334 @@ namespace EamonNet
             }
         }
 
-        private void LookAt(string obj)
+        private void Drink(string obj)
+        {
+            //14010  GOSUB 1950: 
+            obj = GetObjectInput(obj);
+
+            //IF NBTL THEN 2020
+            if(CheckUnfriendlies())
+            {
+                return;
+            }
+
+            //14030  IF RIGHT$ (S$,6) <  > "POTION" AND RIGHT$ (S$,6) <  > "BOTTLE" THEN 14500
+            if (obj.EndsWith("POTION") || obj.EndsWith("BOTTLE"))
+            {
+                //14040  IF AD% (3, 4) <  > -1 AND AD% (3, 4) <  > ROOM THEN 14500
+                if (_currentAdventure.Artifacts[3].Data[4] == -1 || _currentAdventure.Artifacts[3].Data[4] == _currentAdventure.CurrentRoom)
+                {
+                    HealPlayer();
+                }
+            }
+            //14500  IF S$ <  > "WATER" OR RIGHT$ (S$,3) <  > "SEA" THEN
+            else if (obj != "WATER" || !obj.EndsWith("SEA"))
+            {
+                //PRINT : PRINT "A JOB SIMILAR TO GETTING BLOOD FROM A": PRINT "  TURNIP.": PRINT: GOTO 300
+                Console.WriteLine("\r\nA JOB SIMILAR TO GETTING BLOOD FROM A");
+                Console.WriteLine("  TURNIP.\r\n");
+            }
+            else
+            {
+                //14510  PRINT: PRINT "THE WATER TASTED SALTY, BUT IT DOESN'T": PRINT "SEEM TO BE POISONOUS.": PRINT: GOTO 300
+                Console.WriteLine("\r\nTHE WATER TASTED SALTY, BUT IT DOESN'T");
+                Console.WriteLine("SEEM TO BE POISONOUS.\r\n");
+            }
+        }
+
+        private void Say(string obj)
+        {
+            //13000  GOSUB 1950: 
+            obj = GetObjectInput(obj);
+
+            switch (obj)
+            {
+                //IF S$ = "TROLLSFIRE" THEN 20000
+                case "TROLLSFIRE":
+                    this.TrollsFire();
+                    break;
+                //13030  IF S$ = "POWER" THEN 6000
+                case "POWER":
+                    this.PowerSpell(obj);
+                    break;
+                //13040  IF S$ = "HEAL" THEN 
+                case "HEAL":
+                    HealSpell(obj);
+                    break;
+                //13050  IF S$ = "BLAST" THEN 8000
+                case "BLAST":
+                    this.BlastSpell(obj);
+                    break;
+                //13060  IF S$ = "SPEED" THEN 10000
+                case "SPEED":
+                    this.SpeedSpell(obj);
+                    break;
+                //13070  PRINT: PRINT "OKAY, '"; S$; "'": PRINT: GOTO 300
+                default:
+                    Console.WriteLine($"\r\nOKAY, '{obj}'\r\n");
+                    break;
+            }
+        }
+
+        private void Wave(string obj)
+        {
+            Console.WriteLine();
+            //12000  PRINT: IF NBTL THEN PRINT "AS YOU WAVE AT YOUR ENEMY, HE ATTACKS": PRINT "  YOU.": PRINT: GOTO 300
+            if (_currentAdventure.invokeAttack == true)
+            {
+                Console.WriteLine("AS YOU WAVE AT YOUR ENEMY, HE ATTACKS");
+                Console.WriteLine("  YOU.\r\n");
+            }
+            else
+            {
+                //12010  PRINT "NOTHING HAPPENS.": PRINT: GOTO 300
+                Console.WriteLine("NOTHING HAPPENS.\r\n");
+            }
+        }
+
+        private void Smile(string obj)
+        {
+            //11000  PRINT: IF NBTL THEN PRINT "AS YOU SMILE, THE ENEMY ATTACKS YOU.": PRINT: GOTO 300
+            Console.WriteLine();
+            if(_currentAdventure.invokeAttack)
+            {
+                Console.WriteLine("AS YOU SMILE, THE ENEMY ATTACKS YOU.\r\n");
+            }
+            else
+            {
+                //11010  PRINT "NOTHING HAPPENS.": PRINT: GOTO 300
+                Console.WriteLine("NOTHING HAPPENS.\r\n");
+            }
+        }
+
+        private void SpeedSpell(string obj)
+        {
+            //10000 S = 3: GOSUB 7500: IF NOT SUC THEN 300
+            if (CheckSpellSuccess(3))
+            {
+                //10020  IF NOT SPD THEN MD % (0, 10) = MD % (0, 10) + 2 * MD % (0, 2):MD % (0, 2) = 2 * MD % (0, 2)
+                if(this.Player().Speed == 0)
+                {
+                    _currentAdventure.Monsters[0].Data[10] = _currentAdventure.Monsters[0].Data[10] + 2 * _currentAdventure.Monsters[0].Data[2];
+                    _currentAdventure.Monsters[0].Data[2] *= 2;
+                }
+                //10030 SPD = INT(25 * RND(1) + 1): PRINT: PRINT "YOU CAN FEEL THE NEW AGILITY FLOWING": PRINT "  THROUGH YOU!": PRINT: GOTO 300
+                this.Player().Speed = _r.Next(1, 26);
+                Console.WriteLine("\r\nYOU CAN FEEL THE NEW AGILITY FLOWING");
+                Console.WriteLine("  THROUGH YOU!\r\n");
+            }
+        }
+
+        private void BlastSpell(string obj)
+        {
+            //8000  GOSUB 1950:
+            obj = GetObjectInput(obj);
+
+            bool found = false;
+            int monsterNumber = 0;
+            //FOR M = 1 TO NM: IF S$ <  > MN$(M)OR MD % (M, 5) <  > ROOM THEN NEXT : PRINT: PRINT "YOU CAN'T BLAST "; S$; "!": PRINT: GOTO 300
+            for(int m = 1; m < _currentAdventure.NumberOfMonsters; m++)
+            {
+                if(_currentAdventure.Monsters[m].Name == obj && _currentAdventure.Monsters[m].Data[5] == _currentAdventure.CurrentRoom)
+                {
+                    found = true;
+                    monsterNumber = m;
+                    break;
+                }
+            }
+
+            if(!found)
+            {
+                Console.WriteLine($"YOU CAN'T BLAST {obj}!\r\n");
+            }
+            //8030 S = 1: GOSUB 7500: IF NOT SUC THEN 300
+            else if (CheckSpellSuccess(1))
+            {
+                //8040  PRINT: PRINT "DIRECT HIT!": PRINT: S = 5:D = 1:DF = M: GOSUB 3650: PRINT: GOTO 300
+                Console.WriteLine("\r\nDIRECT HIT!\r\n\r\n");
+                this.DamageDefender(_currentAdventure.Monsters[monsterNumber], 1, 5, 0);
+            }
+        }
+
+        private void HealSpell(string obj)
+        {
+            //7000 S = 2: GOSUB 7500: IF SUC THEN 14050
+            if(!CheckSpellSuccess(2))
+            {
+                return;
+            }
+
+            HealPlayer();
+        }
+        
+        private void HealPlayer()
+        {
+            //14050  PRINT: IF MD% (0, 13) THEN PRINT "SOME OF YOUR WOUNDS SEEM TO CLEAR UP.": PRINT
+            Console.WriteLine();
+            if(_currentAdventure.Monsters[0].Data[13] != 0)
+            {
+                Console.WriteLine("SOME OF YOUR WOUNDS SEEM TO CLEARE UP.\r\n");
+            }
+
+            //14060 MD % (0, 13) = MD % (0, 13) - INT(10 * RND(1) + 1): IF MD% (0, 13) < 0 THEN MD% (0, 13) = 0
+            _currentAdventure.Monsters[0].Data[13] -= _r.Next(1, 11);
+            if(_currentAdventure.Monsters[0].Data[13] < 0)
+            {
+                _currentAdventure.Monsters[0].Data[13] = 0;
+            }
+
+            //14070 H2 = MD % (0, 13) + INT(11 * RND(1) - 5):H2 = INT(H2 / 10) + 1: ON H2 GOTO 14080,14090,14100,14110
+            int h2 = _currentAdventure.Monsters[0].Data[13] + _r.Next(1, 12) - 5;
+            h2 = h2 / 10 + 1;
+
+            switch(h2)
+            {
+                case 1:
+                    //14080  PRINT "YOU FEEL GREAT!": PRINT: GOTO 14120
+                    Console.WriteLine("YOU FEEL GREAT!\r\n");
+                    break;
+                case 2:
+                    //14090  PRINT "YOU FEEL BETTER.": PRINT: GOTO 14120
+                    Console.WriteLine("YOU FEEL BETTER.\r\n");
+                    break;
+                case 3:
+                    //14100  PRINT "THOUGH YOU FEEL BETTER, YOU ARE STILL": PRINT "  VERY, VERY SICK!": PRINT: GOTO 14120
+                    Console.WriteLine("THOUGH YOU FEEL BETTER, YOU ARE STILL");
+                    Console.WriteLine("  VERY, VERY SICK!\r\n");
+                    break;
+                case 4:
+                    //14110  PRINT "THOUGH YOU FEEL BETTER, YOU ARE STILL": PRINT "  AT DEATH'S DOOR, KNOCKING LOUDLY.": PRINT
+                    Console.WriteLine("THOUGH YOU FEEL BETTER, YOU ARE STILL");
+                    Console.WriteLine("  AT DEATH'S DOOR, KNOCKING LOUDLY.\r\n");
+                    break;
+            }
+
+            //14120 AD % (3, 4) = 0:AD % (13, 4) = -1: GOTO 300
+            _currentAdventure.Artifacts[3].Data[4] = 0;
+            _currentAdventure.Artifacts[13].Data[4] = -1;
+        }
+
+        private void PowerSpell(string obj)
+        {
+            if(!CheckSpellSuccess(4))
+            {
+                return;
+            }
+
+            //ROOM = current room
+            //RAISE - logical flag if power raised
+            bool raise = false;
+            //AD%(*,*) - artifact data
+
+            //6020 RAISE = 0: FOR M = 1 TO NM:M2 = 13 + M: IF AD% (M2, 4) = ROOM OR AD% (M2, 4) = -1 THEN RAISE = 1: PRINT MN$(M); " COMES ALIVE!":AD % (M2, 4) = 0:MD % (M, 5) = ROOM
+            //:MD % (M, 13) = 0: IF MD% (M, 9) > 0 THEN AD% (MD % (M, 9), 4) = 0: IF MD% (M, 9) = MD % (0, 9) THEN MD% (0, 9) = 0
+            for(int m = 1; m <= _currentAdventure.NumberOfMonsters; m++)
+            {
+                int m2 = m + 13;
+                if (_currentAdventure.Artifacts[m2].Data[4] == _currentAdventure.CurrentRoom || _currentAdventure.Artifacts[m2].Data[4] == -1)
+                {
+                    raise = true;
+                    Console.WriteLine($"{_currentAdventure.Monsters[m].Name} COMES ALIVE!");
+                    _currentAdventure.Artifacts[m2].Data[4] = 0;
+                    _currentAdventure.Monsters[m].Data[5] = _currentAdventure.CurrentRoom;
+                    _currentAdventure.Monsters[m].Data[13] = 0;
+                    if (_currentAdventure.Monsters[m].Data[9] > 0)
+                    {
+                        _currentAdventure.Artifacts[_currentAdventure.Monsters[m].Data[9]].Data[4] = 0;
+                        if (_currentAdventure.Monsters[m].Data[9] == _currentAdventure.Monsters[0].Data[9])
+                        {
+                            _currentAdventure.Monsters[0].Data[9] = 0;
+                        }
+                    }
+                }
+            }
+
+            //6030  NEXT M: IF RAISE THEN NBTL = 0:R2 = ROOM: GOTO 5100
+            if(raise)
+            {
+                _currentAdventure.invokeAttack = false;
+                _currentAdventure.roomToEnter = _currentAdventure.CurrentRoom;
+                this.ProcessEnterRoom();
+                return;
+            }
+
+            //6040  FOR A = 1 TO NA: IF AD% (A, 4) = ROOM THEN RAISE = 1: PRINT AN$(A); " VANISHES!":AD % (A, 4) = 0
+            for(int a = 1; a <= _currentAdventure.NumberOfArtifacts; a++)
+            {
+                if(_currentAdventure.Artifacts[a].Data[4] == _currentAdventure.CurrentRoom)
+                {
+                    raise = true;
+                    Console.WriteLine($"{_currentAdventure.Artifacts[a].Name} VANISHES!");
+                    _currentAdventure.Artifacts[a].Data[4] = 0;
+                }
+            }
+
+            if(raise)
+            {
+                Console.WriteLine();
+            }            
+        }
+
+        private bool CheckSpellSuccess(int spellNumber)
+        {
+            //RL - random number 1 - 100
+            int RL=0;
+
+            //S - spell number
+            //contianed in spellNumber
+            
+            //SA % (*) - total spell ability
+            int SA = this.Player().SpellAbility[spellNumber];
+            
+            //S2 % (*) - current spell ability
+            int S2 = this.Player().CurrentSpellAbility[spellNumber];
+
+            bool success = false;
+
+            //7500 SUC = 0: IF SA% (S)THEN RL = INT(100 * RND(1) + 1):SUC = (((RL <  = S2 % (S)) OR(RL < 5)) AND(RL < 95))
+            if (SA > 0)
+            {
+                RL = _r.Next(1, 101);
+                success = (RL <= S2 || RL < 5) && RL < 95;
+            }
+
+            //7510  IF NOT SUC THEN  PRINT: PRINT "NOTHING HAPPENED.": RETURN
+            if (!success)
+            {
+                Console.WriteLine("NOTHING HAPPENED");
+            }
+            else
+            {
+                //7520 RL = INT(100 * RND(1) + 1): IF RL > S2 % (S)THEN S2 % (S) = S2 % (S) + 2:SA % (S) = SA % (S) + 2
+                RL = _r.Next(1, 101);
+                if (RL > S2)
+                {
+                    this.Player().CurrentSpellAbility[spellNumber] += 2;
+                    this.Player().SpellAbility[spellNumber] += 2;
+                }
+
+                //7530 S2 % (S) = S2 % (S) / 2: RETURN
+                this.Player().CurrentSpellAbility[spellNumber] /= 2;
+            }
+
+            return success;
+        }
+
+        private bool CheckUnfriendlies()
         {
             if (this._currentAdventure.enemyPresent)
             {
                 Console.WriteLine("YOU CAN'T DO THAT WITH UNFRIENDLIES");
                 Console.WriteLine("ABOUT!\r\n");
+                return true;
+            }
+            return false;
+        }
+
+        private void LookAt(string obj)
+        {
+            if (CheckUnfriendlies())
+            {
                 return;
             }
 
@@ -937,7 +1283,7 @@ namespace EamonNet
                         else
                         {
                             //enemy monsters attack
-                            for(int j = 1; j < _currentAdventure.NumberOfMonsters; j++)
+                            for(int j = 1; j <= _currentAdventure.NumberOfMonsters; j++)
                             {
                                 Monster possibleEnemy = _currentAdventure.Monsters[j];
                                 if(possibleEnemy.Data[5] == _currentAdventure.CurrentRoom && possibleEnemy.Data[14] == 0)
@@ -969,7 +1315,7 @@ namespace EamonNet
                             }
                             else
                             {
-                                for (int j = 1; j < _currentAdventure.NumberOfMonsters; j++)
+                                for (int j = 1; j <= _currentAdventure.NumberOfMonsters; j++)
                                 {
                                     Monster possibleEnemy = _currentAdventure.Monsters[j];
                                     if (possibleEnemy.Data[5] == _currentAdventure.CurrentRoom && possibleEnemy.Data[14] == 1 && _r.Next(4) < 1)
@@ -1520,7 +1866,7 @@ namespace EamonNet
 
         private void DisplayMonstersInRoom()
         {
-            for (int i = 0; i < this._currentAdventure.NumberOfMonsters; i++)
+            for (int i = 1; i <= this._currentAdventure.NumberOfMonsters; i++)
             {
                 if (this._currentAdventure.Monsters[i].Data[5] == this._currentAdventure.CurrentRoom)
                 {

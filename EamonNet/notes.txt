@@ -36,3 +36,8 @@ GET,  PICK, DROP, ATTACK, LOOK, EXAMINE, UP,   U,    DOWN, D,    NORTH, N,    EA
 
 S,    POWER, HEAL, BLAST, SPEED, SMILE, WAVE,  SAY,   DRINK, READ,  READY, ESCAPE, RETREAT, FLEE,  INVENTORY, I,     ENTER, TROLLSFIRE, OPEN
 5000, 6000,  7000, 8000,  10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000,  17000,   17000, 18000,     18000, 19000, 20000,      21000
+
+RL - random number 1-100
+S - spell number
+SA%(*) - total spell ability
+S2%(*) - current spell ability
